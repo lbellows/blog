@@ -1,0 +1,2 @@
+# blog
+Tech Thoughts
