@@ -132,21 +132,19 @@ Load up the browser (if it didn't load automatically via browsersync) and check 
 
 If you have a server side driven view, you will want to inject all the data you may need to use into your state object. Note, you will want to make sure this isn't private data and it is OK to have exposed on the front end. Open your page layout/masterpage and add something like the following:
 
-```html
-
+```
+    SCC.model = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model, Newtonsoft.Json.Formatting.None));
+    SCC.viewBag = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag, Newtonsoft.Json.Formatting.None));
 ```
 
 Note, make sure this is after where your bundle is included but before your `SCC.home.loaded()` events and such.
 
 
 # TBD ... some more things to do...
+`Adding some more steps soon!`
 
 # Great, what now?
 
 This is a great technique if you're taking over an old project and want to add new features and fixes that will minimize side effects. When something goes wrong and it isn't your fault, you can clearly point to the new code you've added and it will be cleanly seperated from the archaic stuff. It also avoids breaking something that **was** working because there is a variable in the JS file that is used somewhere in a view you weren't expecting.
 
 This seemed like a bit of work but think about all the benefits we received: access to ES6 and beyond, a package manager, code splitting, better organization, minification... the list goes on! Even for newer developers, this should only take one workday at max to setup and you can build the rest as you go. How you want to extend this will depend on your needs and the needs of your client.
-
-```javascript
-Code
-```
