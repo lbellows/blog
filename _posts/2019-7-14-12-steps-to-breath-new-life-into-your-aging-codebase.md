@@ -139,6 +139,7 @@ If you have a server side driven view, you will want to inject all the data you 
 
 Note, make sure this is after where your bundle is included but before your `SCC.home.loaded()` events and such.
 
+# 9. Polyfill Older Browsers
 
 # TBD ... some more things to do...
 `Adding some more steps soon!`
