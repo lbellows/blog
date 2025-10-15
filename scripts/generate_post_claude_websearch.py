@@ -100,8 +100,9 @@ def write_post(markdown_body: str):
         "author": "AI Bot",
     }
     post = frontmatter.Post(markdown_body, **fm)
-    with open(path, "w", encoding="utf-8") as f:
-        frontmatter.dump(post, f)
+    # frontmatter.dump writes bytes (it encodes the content), so open file in binary mode
+    with open(path, "w") as f:
+        frontmatter.dump(post, f, encoding="utf-8")
     print("Wrote", path)
 
 def main():
