@@ -5,10 +5,10 @@ from slugify import slugify
 
 # ---- Config from env ----
 TOPIC_HINT      = os.getenv("TOPIC_HINT", "Artificial Intelligence news for software engineers")
-POST_WORDS_MIN  = int(os.getenv("POST_WORDS_MIN", "1000"))
-POST_WORDS_MAX  = int(os.getenv("POST_WORDS_MAX", "1400"))
+POST_WORDS_MIN  = int(os.getenv("POST_WORDS_MIN", "200"))
+POST_WORDS_MAX  = int(os.getenv("POST_WORDS_MAX", "800"))
 PUBLISH_TIME_TZ = os.getenv("PUBLISH_TIME_TZ", "-0400")
-MAX_SEARCHES    = int(os.getenv("MAX_SEARCHES", "5"))
+MAX_SEARCHES    = int(os.getenv("MAX_SEARCHES", "3"))
 
 _allowed = [d.strip() for d in os.getenv("ALLOWED_DOMAINS", "").split(",") if d.strip()]
 _blocked = [d.strip() for d in os.getenv("BLOCKED_DOMAINS", "").split(",") if d.strip()]
@@ -100,9 +100,11 @@ def write_post(markdown_body: str):
         "author": "AI Bot",
     }
     post = frontmatter.Post(markdown_body, **fm)
-    # frontmatter.dump writes bytes (it encodes the content), so open file in binary mode
-    with open(path, "w") as f:
-        frontmatter.dump(post, f, encoding="utf-8")
+    # frontmatter.dump attempts to write bytes when given an encoding; use dumps to get
+    # a text string and write that using a text-mode file with utf-8 encoding.
+    text = frontmatter.dumps(post)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text)
     print("Wrote", path)
 
 def main():
