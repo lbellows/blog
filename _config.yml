@@ -4,7 +4,11 @@
 title: "Tech Thoughts"
 tagline: "Daily, grounded posts on AI for .NET/Azure/GitHub builders"
 description: "A developer-first blog: practical AI workflows, code snippets, and links to reputable sources."
-author:
+author: "Liam Bellows"
+
+# Author profile (kept separate from the simple `author` string so
+# templates that expect `site.author` to be a string continue to work.)
+author_profile:
   name: "lbellows"
   email: ""
   twitter_username: ""
