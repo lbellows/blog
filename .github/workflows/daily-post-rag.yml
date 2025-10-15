@@ -33,7 +33,7 @@ jobs:
           # --- Tunables ---
           TOPIC_HINT: "AI + .NET + Azure + GitHub"   # audience/angle
           MAX_SEARCHES: "5"                          # Claude may search up to this many times
-          ALLOWED_DOMAINS: "arxiv.org,blogs.microsoft.com,learn.microsoft.com,techcrunch.com,theverge.com,developer.nvidia.com,opensource.com"
+          ALLOWED_DOMAINS: "arxiv.org,blogs.microsoft.com,learn.microsoft.com,techcrunch.com,developer.nvidia.com,opensource.com"
           BLOCKED_DOMAINS: ""                        # optional, comma-separated
           POST_WORDS_MIN: "1000"
           POST_WORDS_MAX: "1400"
