@@ -1,1 +1,139 @@
+# =========================
+# Site identity
+# =========================
+title: "Tech Thoughts"
+tagline: "Daily, grounded posts on AI for .NET/Azure/GitHub builders"
+description: "A developer-first blog: practical AI workflows, code snippets, and links to reputable sources."
+author:
+  name: "lbellows"
+  email: ""
+  twitter_username: ""
+  github_username: "lbellows"
+  linkedin: ""
+
+# Project Pages (repo name = blog): url + baseurl must be set like this.
+# If you later switch to a user/organization site, change baseurl to "".
+url: "https://lbellows.github.io"
+baseurl: "/blog"
+
+# =========================
+# Build & Markdown
+# =========================
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+highlighter: rouge
+
+timezone: America/New_York
+permalink: /:categories/:year/:month/:day/:title/
+excerpt_separator: "<!--more-->"   # optional: add this marker in posts to control excerpts
+future: false                      # do not publish posts dated in the future
+show_drafts: false                 # drafts are not built on GitHub Pages
+
+# =========================
+# Theme
+# =========================
+# Choose a GitHub Pages-supported theme, or comment this out if you have a custom one.
 theme: minima
+minima:
+  date_format: "%b %-d, %Y"
+  social_links:
+    - platform: github
+      user_url: "https://github.com/lbellows"
+    # - platform: twitter
+    #   user_url: "https://twitter.com/<handle>"
+    # - platform: linkedin
+    #   user_url: "https://www.linkedin.com/in/<handle>/"
+
+# =========================
+# Plugins (GitHub Pages whitelist)
+# =========================
+plugins:
+  - jekyll-feed        # /feed.xml
+  - jekyll-sitemap     # /sitemap.xml
+  - jekyll-seo-tag     # SEO/meta tags
+  - jekyll-paginate    # simple index pagination (supported on GH Pages)
+
+# Plugin configuration
+paginate: 10
+paginate_path: "/page:num"
+
+# jekyll-seo-tag config
+social:
+  name: "Tech Thoughts"
+  links:
+    - "https://github.com/lbellows"
+# Set a site-wide image for social cards if you have one in /assets
+# logo: /assets/img/site-card.png
+
+# jekyll-feed config (optional: set categories/tags included in the feed)
+feed:
+  path: feed.xml
+
+# =========================
+# Collections & Defaults
+# =========================
+collections:
+  posts:
+    output: true
+
+defaults:
+  # Default front matter for posts
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      author: "AI Bot"
+      categories: ["ai"]
+      # You can override in individual posts:
+      # tags: ["ai","automation","news"]
+
+  # Site-wide default values for pages (optional)
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+
+# =========================
+# Navigation (for minima or custom includes)
+# =========================
+# If using a custom header nav, you can read these from site.data/navigation.yml instead.
+nav:
+  - name: "Home"
+    url: "/"
+  - name: "Posts"
+    url: "/"
+  - name: "About"
+    url: "/about/"
+
+# =========================
+# Exclusions & Includes
+# =========================
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - scripts            # keep helper scripts out of the published site
+  - .github
+  - .devcontainer
+  - .vscode
+
+include:
+  - _pages             # if you keep custom pages under /_pages
+
+# =========================
+# URL Hygiene
+# =========================
+# Force trailing slashes for prettified URLs (optional)
+# pretty_urls: true
+
+# =========================
+# Analytics (optional)
+# =========================
+# google_analytics: "G-XXXXXXXXXX"

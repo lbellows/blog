@@ -1,0 +1,54 @@
+name: Daily AI Blog Post (Claude Web Search)
+
+on:
+  schedule:
+    - cron: "15 11 * * *"   # 11:15 UTC daily (~07:15 ET)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  write-post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install anthropic python-frontmatter python-slugify pyyaml
+
+      - name: Generate grounded article via Claude Web Search
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          # --- Tunables ---
+          TOPIC_HINT: "AI + .NET + Azure + GitHub"   # audience/angle
+          MAX_SEARCHES: "5"                          # Claude may search up to this many times
+          ALLOWED_DOMAINS: "arxiv.org,blogs.microsoft.com,learn.microsoft.com,techcrunch.com,theverge.com,developer.nvidia.com,opensource.com"
+          BLOCKED_DOMAINS: ""                        # optional, comma-separated
+          POST_WORDS_MIN: "1000"
+          POST_WORDS_MAX: "1400"
+          PUBLISH_TIME_TZ: "-0400"
+        run: |
+          python scripts/generate_post_claude_websearch.py
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "ai-bot"
+          git config user.email "ai-bot@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add _posts
+            git commit -m "chore(posts): daily AI article (Claude web search) [skip ci]"
+            git push
+          else
+            echo "No changes to commit."
+          fi
