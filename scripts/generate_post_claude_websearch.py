@@ -58,7 +58,7 @@ def ask_claude_with_web_search():
         tool_def["blocked_domains"] = _blocked
 
     resp = client.messages.create(
-        model="claude-3-7-sonnet-20250219",  # pick any supported web-search-capable Claude model
+        model="claude-sonnet-4-5-20250929",  # pick any supported web-search-capable Claude model
         max_tokens=2200,
         temperature=0.6,
         system=SYSTEM_PROMPT,
