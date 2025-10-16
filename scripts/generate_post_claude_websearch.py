@@ -1,13 +1,15 @@
 import os, re, datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
+from datetime import datetime, timedelta
 import frontmatter
+import anthropic
 from slugify import slugify
 
 # ---- Config from env ----
 TOPIC_HINT      = os.getenv("TOPIC_HINT", "Artificial Intelligence news for software engineers")
 POST_WORDS_MIN  = int(os.getenv("POST_WORDS_MIN", "200"))
 POST_WORDS_MAX  = int(os.getenv("POST_WORDS_MAX", "800"))
-PUBLISH_TIME_TZ = os.getenv("PUBLISH_TIME_TZ", "-0400")
 MAX_SEARCHES    = int(os.getenv("MAX_SEARCHES", "3"))
 
 _allowed = [d.strip() for d in os.getenv("ALLOWED_DOMAINS", "").split(",") if d.strip()]
@@ -29,7 +31,7 @@ that impact developers. Then write a grounded Markdown blog post with:
 - Cautious language for claims; avoid speculation and hallucinations.
 - A **Further reading** section listing all source links as plain URLs.
 
-Length: {POST_WORDS_MIN}–{POST_WORDS_MAX} words. US English. Markdown only (no HTML).
+Length: {POST_WORDS_MIN}-{POST_WORDS_MAX} words. US English. Markdown only (no HTML).
 If web search fails or yields little, write a pragmatic evergreen piece for the same audience.
 """
 
@@ -37,13 +39,13 @@ USER_PROMPT = f"""
 Topic focus / audience: {TOPIC_HINT}
 
 Instructions:
-1) Use the web_search tool to find 4–6 fresh, reputable sources (last few days/weeks).
+1) Use the web_search tool to find 4-6 fresh, reputable sources (last few days/weeks).
 2) Synthesize the key points that matter to engineers (cost, latency, APIs, integration steps).
 3) Cite sources inline where appropriate and list all links at the end in a 'Further reading' list.
 """
 
 def ask_claude_with_web_search():
-    import anthropic
+
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
     # Build tool definition per Anthropic docs
@@ -92,12 +94,16 @@ def write_post(markdown_body: str):
         slug += "-2"
 
     path = POSTS_DIR / f"{TODAY:%Y-%m-%d}-{slug}.md"
+
+    now_ny = datetime.now(ZoneInfo("America/New_York"))
+    publish_dt = now_ny - timedelta(minutes=1) 
+
     fm = {
         "layout": "post",
         "title": title,
-        "date": f"{TODAY:%Y-%m-%d} 09:00:00 {PUBLISH_TIME_TZ}",
+        "date": publish_dt.strftime("%Y-%m-%d %H:%M:%S %z"),
         "tags": ["ai", "automation", "news"],
-        "author": "AI Bot",
+        "author": "LB Helper",
     }
     post = frontmatter.Post(markdown_body, **fm)
     # frontmatter.dump attempts to write bytes when given an encoding; use dumps to get
