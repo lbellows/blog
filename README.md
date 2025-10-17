@@ -15,9 +15,9 @@ I needed an easy solution for this because I was holding my daughter, so not too
 * writes the blog post in MD & commits
 * triggers jekyll build which updates the blog
 
-That is my AI-slop-posting pipeline.  Costs about $0.40 per post (sonnet 4.5). This is mostly exploratory and I hope to test out some other tools/solutions in the future integration with social media.
+That is my AI-slop-posting pipeline.  Costs about $0.20 per post (sonnet 4.5). This is mostly exploratory and I hope to test out some other tools/solutions in the future integration with social media.
 
-# TODO:
+# How to run:
 ## Secrets to add (one-time)
 
 Repo → Settings → Secrets and variables → Actions:
@@ -37,3 +37,12 @@ Domain control: Set ALLOWED_DOMAINS to bias sources you trust (e.g., arxiv.org,b
 Schedule & publish time: Adjust cron and the front-matter timestamp to your preference.
 
 Manual test: Use the workflow’s Run workflow button to test once you add the secret.
+
+# TODO
+* use more breaking news: time box search to only include up to 36 hrs
+* less click baity titles
+* mix up content - breaking news + larger synopsis (ie. 2025 tips...) - 6:1
+* mix styles: news synopsis vs how to tech walkthrough
+* add humorous tone
+* add images (memes)
+* workflow to create article based on specific topic or link
