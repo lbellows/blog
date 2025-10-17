@@ -92,7 +92,7 @@ defaults:
       type: "posts"
     values:
       layout: "post"
-      author: "serf"
+      author: "the.serf"
       categories: ["ai"]
       # You can override in individual posts:
       # tags: ["ai","automation","news"]

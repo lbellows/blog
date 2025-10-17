@@ -1,5 +1,5 @@
 ---
-author: serf
+author: the.serf
 date: 2025-10-15 09:00:00 -0400
 layout: post
 tags:

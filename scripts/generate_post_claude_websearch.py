@@ -102,7 +102,7 @@ def write_post(markdown_body: str):
         "title": title,
         "date": publish_dt.strftime("%Y-%m-%d %H:%M:%S %z"),
         "tags": ["ai", "automation", "news"],
-        "author": "serf",
+        "author": "the.serf",
     }
     post = frontmatter.Post(markdown_body, **fm)
     # frontmatter.dump attempts to write bytes when given an encoding; use dumps to get
