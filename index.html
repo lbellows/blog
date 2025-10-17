@@ -7,15 +7,7 @@ layout: default
 
 {% assign items = paginator.posts | default: site.posts %}
 
-<header class="site-header" role="banner">
-  <a class="site-logo" href="{{ '/' | relative_url }}" aria-label="Home">
-  <img src="{{ '/assets/images/robot.webp' | relative_url }}" alt="Robot logo" width="56" height="56" />
-    <div>
-  <div class="site-title">{{ site.title | default: 'My Blog' }}</div>
-  <div class="site-sub">{{ site.description | default: 'Thoughts on code & tooling' }}</div>
-    </div>
-  </a>
-</header>
+{%- comment -%} Header is provided by the minima theme; configure `logo` and `tagline` in `_config.yml` and remove duplicate markup from this page. {%- endcomment -%}
 
 <section class="posts-grid" aria-label="Blog posts">
   {% for post in items %}
