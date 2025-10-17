@@ -178,8 +178,15 @@ a:focus {
 
 /* Header / logo */
 .site-header {
+    width: 100%;
+    margin: 0 0 1.25rem;
+    display: block;
+    padding: .25rem 0;
+}
+
+.site-header-inner {
     max-width: 1100px;
-    margin: 0 auto 1.25rem;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -194,10 +201,12 @@ a:focus {
     color: inherit;
 }
 
+/* Logo sizing: fixed height, auto width so aspect ratio is preserved */
+.site-logo img,
 .site-logo svg {
-    width: 56px;
     height: 56px;
-    flex: 0 0 56px;
+    width: auto;
+    flex: 0 0 auto;
     border-radius: 10px;
 }
 

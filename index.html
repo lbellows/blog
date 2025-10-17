@@ -1,8 +1,7 @@
 ---
 layout: default
 ---
-<link rel="stylesheet" href="{{ '/assets/css/styles.css' | relative_url }}">
-<link rel="icon" type="image/svg+xml" href="{{ '/assets/images/robot.webp' | relative_url }}">
+{%- comment -%} Stylesheet and favicon moved to `_includes/header.html` so they load on all pages {%- endcomment -%}
 {% assign items = paginator.posts | default: site.posts %}
 
 {%- comment -%} Header is provided by the minima theme; configure `logo` and `tagline` in `_config.yml` and remove duplicate markup from this page. {%- endcomment -%}
