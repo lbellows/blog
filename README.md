@@ -46,3 +46,4 @@ Manual test: Use the workflow’s Run workflow button to test once you add the s
 * add humorous tone
 * add images (memes)
 * workflow to create article based on specific topic or link
+* figure out how to monetize
