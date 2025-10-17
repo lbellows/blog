@@ -2,31 +2,27 @@
 layout: default
 ---
 
-<style>
-  /* Lightweight styling (remove if you have a site CSS) */
-  .posts-grid { display: grid; gap: 2rem; }
-  @media (min-width: 720px) { .posts-grid { grid-template-columns: 1fr 1fr; } }
-  .post-card { border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; background: #fff; }
-  .post-card a { text-decoration: none; }
-  .post-cover { display: block; width: 100%; height: 180px; object-fit: cover; background: #f3f4f6; }
-  .post-body { padding: 1rem 1.25rem; }
-  .post-meta { color: #6b7280; font-size: 0.9rem; margin-bottom: 0.5rem; display:flex; gap: .75rem; flex-wrap: wrap;}
-  .post-title { margin: 0 0 .5rem 0; font-size: 1.25rem; line-height: 1.3; }
-  .post-excerpt { color: #111827; margin: .5rem 0 1rem; }
-  .post-tags { margin-top: .25rem; display:flex; gap:.5rem; flex-wrap: wrap;}
-  .tag { background:#f3f4f6; color:#374151; padding:.15rem .5rem; border-radius:999px; font-size:.8rem; }
-  .read-more { font-weight: 600; }
-  .pager { display:flex; justify-content: space-between; margin-top:2rem; }
-</style>
+<link rel="stylesheet" href="{{ '/assets/css/styles.css' | relative_url }}" />
+<link rel="icon" type="image/svg+xml" href="{{ '/assets/images/robot.webp' | relative_url }}">
 
 {% assign items = paginator.posts | default: site.posts %}
+
+<header class="site-header" role="banner">
+  <a class="site-logo" href="{{ '/' | relative_url }}" aria-label="Home">
+  <img src="{{ '/assets/images/robot.webp' | relative_url }}" alt="Robot logo" width="56" height="56" />
+    <div>
+  <div class="site-title">{{ site.title | default: 'My Blog' }}</div>
+  <div class="site-sub">{{ site.description | default: 'Thoughts on code & tooling' }}</div>
+    </div>
+  </a>
+</header>
 
 <section class="posts-grid" aria-label="Blog posts">
   {% for post in items %}
     {% comment %}
       Read-time estimate: count words from content (strip HTML) / 200 wpm (min 1)
     {% endcomment %}
-    {% assign word_count = post.content | strip_html | strip_newlines | replace: "  ", " " | split: " " | size %}
+  {% assign word_count = post.content | strip_html | strip_newlines | replace: '  ', ' ' | split: ' ' | size %}
     {% assign minutes = word_count | divided_by: 200 %}
     {% if minutes < 1 %}{% assign minutes = 1 %}{% endif %}
 
@@ -40,7 +36,7 @@ layout: default
       <div class="post-body">
         <div class="post-meta">
           <time itemprop="datePublished" datetime="{{ post.date | date_to_xmlschema }}">
-            {{ post.date | date: "%b %-d, %Y" }}
+            {{ post.date | date: '%b %-d, %Y' }}
           </time>
           <span aria-hidden="true">•</span>
           <span>{{ minutes }} min read</span>
@@ -86,4 +82,4 @@ layout: default
   </nav>
 {% endif %}
 
-<link rel="alternate" type="application/atom+xml" title="{{ site.title | escape }} Feed" href="{{ "/feed.xml" | relative_url }}">
+<link rel="alternate" type="application/atom+xml" title="{{ site.title | escape }} Feed" href="{{ '/feed.xml' | relative_url }}">

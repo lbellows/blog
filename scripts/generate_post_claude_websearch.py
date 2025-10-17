@@ -9,7 +9,7 @@ from slugify import slugify
 TOPIC_HINT      = os.getenv("TOPIC_HINT", "Artificial Intelligence news for software engineers")
 POST_WORDS_MIN  = int(os.getenv("POST_WORDS_MIN", "200"))
 POST_WORDS_MAX  = int(os.getenv("POST_WORDS_MAX", "800"))
-MAX_SEARCHES    = int(os.getenv("MAX_SEARCHES", "3"))
+MAX_SEARCHES    = int(os.getenv("MAX_SEARCHES", "5"))
 
 _allowed = [d.strip() for d in os.getenv("ALLOWED_DOMAINS", "").split(",") if d.strip()]
 _blocked = [d.strip() for d in os.getenv("BLOCKED_DOMAINS", "").split(",") if d.strip()]

@@ -1,0 +1,213 @@
+/* styles.css — site-wide styles to liven up the blog
+   Primary color: green; wider centered layout; improved typography & cards
+*/
+:root {
+    --green-600: #16a34a;
+    --green-700: #15803d;
+    --green-100: #ecfdf5;
+    --muted: #6b7280;
+    --bg: #fbfdfe;
+    --card-border: rgba(22, 163, 74, 0.12);
+}
+
+/* Base */
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    background: linear-gradient(180deg, var(--bg), #ffffff);
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+    padding: 2rem 1rem;
+}
+
+/* Page container: slightly wider and centered */
+.posts-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    gap: 1.75rem;
+    padding: 0.5rem;
+}
+
+@media (min-width: 720px) {
+    .posts-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Post card */
+.post-card {
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #ffffff, #fbffff);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
+}
+
+.post-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.06);
+}
+
+.post-card a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.post-cover {
+    display: block;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: #f3f4f6;
+}
+
+.post-body {
+    padding: 1.25rem 1.5rem;
+}
+
+.post-meta {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: .5rem;
+    display: flex;
+    gap: .75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.post-meta time {
+    font-variant-numeric: tabular-nums;
+}
+
+.post-title {
+    margin: 0 0 .5rem 0;
+    font-size: 1.35rem;
+    line-height: 1.25;
+}
+
+.post-title a {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.post-excerpt {
+    color: #374151;
+    margin: .5rem 0 1rem;
+}
+
+.post-tags {
+    margin-top: .5rem;
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background: var(--green-100);
+    color: var(--green-700);
+    padding: .2rem .55rem;
+    border-radius: 999px;
+    font-size: .8rem;
+}
+
+.read-more {
+    font-weight: 700;
+    color: var(--green-600);
+}
+
+.read-more:hover {
+    color: var(--green-700);
+    text-decoration: underline;
+}
+
+.pager {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5rem;
+}
+
+.pager a {
+    color: var(--muted);
+}
+
+.pager a:hover {
+    color: var(--green-600);
+}
+
+/* Small screens: single-column, comfortable spacing */
+@media (max-width: 719px) {
+    body {
+        padding: 1rem;
+    }
+
+    .post-cover {
+        height: 180px;
+    }
+}
+
+/* Accessibility: focus outlines */
+a:focus {
+    outline: 3px solid rgba(22, 163, 74, 0.18);
+    outline-offset: 3px;
+}
+
+/* Utility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Header / logo */
+.site-header {
+    max-width: 1100px;
+    margin: 0 auto 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .25rem .5rem;
+}
+
+.site-logo {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.site-logo svg {
+    width: 56px;
+    height: 56px;
+    flex: 0 0 56px;
+    border-radius: 10px;
+}
+
+.site-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #052e16;
+}
+
+.site-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
