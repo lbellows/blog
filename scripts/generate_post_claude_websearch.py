@@ -1,7 +1,6 @@
 import os, re, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
-from datetime import datetime, timedelta
 import frontmatter
 import anthropic
 from slugify import slugify
@@ -95,8 +94,8 @@ def write_post(markdown_body: str):
 
     path = POSTS_DIR / f"{TODAY:%Y-%m-%d}-{slug}.md"
 
-    now_ny = datetime.now(ZoneInfo("America/New_York"))
-    publish_dt = now_ny - timedelta(minutes=1) 
+    now_ny = datetime.datetime.now(ZoneInfo("America/New_York"))
+    publish_dt = now_ny - datetime.timedelta(minutes=1)
 
     fm = {
         "layout": "post",
