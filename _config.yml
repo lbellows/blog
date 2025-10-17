@@ -90,7 +90,7 @@ defaults:
       type: "posts"
     values:
       layout: "post"
-      author: "AI Bot"
+      author: "serf"
       categories: ["ai"]
       # You can override in individual posts:
       # tags: ["ai","automation","news"]

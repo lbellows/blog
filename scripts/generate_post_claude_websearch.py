@@ -59,7 +59,7 @@ def ask_claude_with_web_search():
         tool_def["blocked_domains"] = _blocked
 
     resp = client.messages.create(
-        model="claude-sonnet-4-5-20250929",  # pick any supported web-search-capable Claude model
+        model="claude-haiku-4-5-20251001",  # pick any supported web-search-capable Claude model
         max_tokens=2200,
         temperature=0.6,
         system=SYSTEM_PROMPT,
@@ -102,7 +102,7 @@ def write_post(markdown_body: str):
         "title": title,
         "date": publish_dt.strftime("%Y-%m-%d %H:%M:%S %z"),
         "tags": ["ai", "automation", "news"],
-        "author": "LB Helper",
+        "author": "serf",
     }
     post = frontmatter.Post(markdown_body, **fm)
     # frontmatter.dump attempts to write bytes when given an encoding; use dumps to get

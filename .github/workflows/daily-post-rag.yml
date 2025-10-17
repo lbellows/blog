@@ -31,20 +31,19 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
           # --- Tunables ---
-          TOPIC_HINT: "AI + .NET + Azure + GitHub"   # audience/angle
+          TOPIC_HINT: "AI + .NET + Azure + GitHub + LLM"   # audience/angle
           MAX_SEARCHES: "5"                          # Claude may search up to this many times
-          ALLOWED_DOMAINS: "arxiv.org,blogs.microsoft.com,learn.microsoft.com,techcrunch.com,developer.nvidia.com,opensource.com"
+          ALLOWED_DOMAINS: "arxiv.org,blogs.microsoft.com,learn.microsoft.com,techcrunch.com,developer.nvidia.com,opensource.com,x.com,reddit.com"
           BLOCKED_DOMAINS: ""                        # optional, comma-separated
-          POST_WORDS_MIN: "1000"
-          POST_WORDS_MAX: "1400"
-          PUBLISH_TIME_TZ: "-0400"
+          POST_WORDS_MIN: "200"
+          POST_WORDS_MAX: "1000"
         run: |
           python scripts/generate_post_claude_websearch.py
 
       - name: Commit & push if changed
         run: |
-          git config user.name  "ai-bot"
-          git config user.email "ai-bot@users.noreply.github.com"
+          git config user.name  "serf"
+          git config user.email "serf@users.noreply.github.com"
           if [ -n "$(git status --porcelain)" ]; then
             git add _posts
             git commit -m "chore(posts): daily AI article (Claude web search) [skip ci]"

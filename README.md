@@ -5,6 +5,18 @@ Trying out some github pages features
 
 link: https://lbellows.github.io/blog/
 
+# About AI blog posting
+
+I needed an easy solution for this because I was holding my daughter, so not too much typing could be involed:
+
+* git workflows
+* executes python
+* calls claude API with search tool enabled
+* writes the blog post in MD & commits
+* triggers jekyll build which updates the blog
+
+That is my AI-slop-posting pipeline.  Costs about $0.40 per post (sonnet 4.5). This is mostly exploratory and I hope to test out some other tools/solutions in the future integration with social media.
+
 # TODO:
 ## Secrets to add (one-time)
 

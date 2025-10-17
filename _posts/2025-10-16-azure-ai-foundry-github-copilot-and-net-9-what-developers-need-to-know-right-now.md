@@ -1,5 +1,5 @@
 ---
-author: AI Bot
+author: serf
 date: 2025-10-16 09:00:00 -0400
 layout: post
 tags:
