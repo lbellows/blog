@@ -1,9 +1,14 @@
 <header class="site-header" role="banner">
-  <a class="site-logo" href="{{ '/' | relative_url }}" aria-label="Home">
-    {% if site.logo %}
-      <img src="{{ site.logo | relative_url }}" alt="{{ site.title }} logo" width="56" height="56" />
-    {% endif %}
-    <div class="site-title">{{ site.title }}</div>
-  </a>
-  <div class="site-sub">{{ site.tagline | default: site.description }}</div>
+    <a class="site-logo" href="{{ '/' | relative_url }}" aria-label="Home">
+        {% if site.logo %}
+        <img
+            src="{{ site.logo | relative_url }}"
+            alt="{{ site.title }} logo"
+            width="56"
+            height="56"
+        >
+        {% endif %}
+        <div class="site-title">{{ site.title }}</div>
+    </a>
+    <div class="site-sub">{{ site.tagline | default: site.description }}</div>
 </header>
