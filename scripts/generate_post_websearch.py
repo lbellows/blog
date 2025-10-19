@@ -2,7 +2,6 @@ import os, re, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import frontmatter
-import anthropic
 from slugify import slugify
 import random
 import requests
@@ -19,7 +18,7 @@ FOUNDARY_MODELS_DEFAULT = [
     "DeepSeek-V3.1",
     "gpt-5-mini",
     "gpt-oss-120b",
-    "Llama-4-Maverick-17B-128E-1",
+    "Llama-4-Maverick-17B-128E-Instruct-FP8",
 ]
 
 _allowed = [d.strip() for d in os.getenv("ALLOWED_DOMAINS", "").split(",") if d.strip()]
@@ -43,6 +42,7 @@ that impact developers. Then write a grounded Markdown blog post with:
 
 Length: {POST_WORDS_MIN}-{POST_WORDS_MAX} words. US English. Markdown only (no HTML).
 If web search fails or yields little, write a pragmatic evergreen piece for the same audience.
+If the web_search tool is unavailable, do not emit tool-call markup (e.g., <|start|> tokens); respond directly with the final article.
 """
 
 USER_PROMPT = f"""
@@ -54,7 +54,7 @@ Instructions:
 3) Cite sources inline where appropriate and list all links at the end in a 'Further reading' list.
 """
 
-def ask_azure_foundry_with_web_search(foundry_model: str | None = None, post_fn=None):
+def ask_azure_foundry_with_web_search(foundry_model: str | None = None, post_fn=None, _extra_messages=None):
     """Call Azure OpenAI (Foundry) using the AzureOpenAI SDK.
 
     Maps env vars:
@@ -84,13 +84,25 @@ def ask_azure_foundry_with_web_search(foundry_model: str | None = None, post_fn=
         {"role": "system", "content": [{"type": "text", "text": SYSTEM_PROMPT}]},
         {"role": "user", "content": [{"type": "text", "text": USER_PROMPT}]},
     ]
+    if _extra_messages:
+        messages.extend(_extra_messages)
 
     payload = {
         "messages": messages,
-        "temperature": 0.6,
-        "top_p": 0.95,
         "max_tokens": 2048,
     }
+    temp = os.getenv("FOUNDARY_TEMPERATURE")
+    top_p = os.getenv("FOUNDARY_TOP_P")
+    try:
+        if temp is not None:
+            payload["temperature"] = float(temp)
+    except ValueError:
+        pass
+    try:
+        if top_p is not None:
+            payload["top_p"] = float(top_p)
+    except ValueError:
+        pass
 
     headers = {
         "Content-Type": "application/json",
@@ -105,6 +117,14 @@ def ask_azure_foundry_with_web_search(foundry_model: str | None = None, post_fn=
 
     # If the model rejects the parameter, attempt a retry using
     # `max_completion_tokens` instead of `max_tokens`.
+    def _maybe_retry_with(payload_override: dict | None = None, drop_keys: tuple[str, ...] = ()):
+        updated = dict(payload)
+        for key in drop_keys:
+            updated.pop(key, None)
+        if payload_override:
+            updated.update(payload_override)
+        return post(url, json=updated, headers=headers, timeout=60)
+
     if not resp.ok:
         body = None
         try:
@@ -119,7 +139,7 @@ def ask_azure_foundry_with_web_search(foundry_model: str | None = None, post_fn=
                 msg = json.dumps(body)
             else:
                 msg = str(body)
-            if resp.status_code == 400 and ('max_tokens' in msg and ('unsupported' in msg or 'not supported' in msg or 'unsupported_parameter' in msg)):
+            if resp.status_code == 400 and 'max_tokens' in msg and ('unsupported' in msg or 'not supported' in msg or 'unsupported_parameter' in msg):
                 try_retry = True
         except Exception:
             try_retry = False
@@ -134,6 +154,17 @@ def ask_azure_foundry_with_web_search(foundry_model: str | None = None, post_fn=
             else:
                 new_payload['max_completion_tokens'] = val
                 resp = post(url, json=new_payload, headers=headers, timeout=60)
+
+        # If still not ok, try removing unsupported temperature settings.
+        if not resp.ok:
+            try:
+                msg = json.dumps(body) if isinstance(body, dict) else str(body)
+            except Exception:
+                msg = str(body)
+            if resp.status_code == 400 and 'temperature' in msg and 'unsupported' in msg:
+                resp = _maybe_retry_with(drop_keys=("temperature",))
+                if not resp.ok:
+                    resp = _maybe_retry_with({"top_p": 1.0}, drop_keys=("temperature",))
 
         # After optional retry, if still not ok raise a helpful error
         if not resp.ok:
@@ -184,7 +215,61 @@ def ask_azure_foundry_with_web_search(foundry_model: str | None = None, post_fn=
         # last resort: serialize the response
         return json.dumps(data)
 
-    return "\n".join(t.strip() for t in texts if t).strip()
+    markdown = "\n".join(t.strip() for t in texts if t).strip()
+    if not markdown and not _extra_messages:
+        fallback_instruction = [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": (
+                            "The previous response was empty. Provide the complete Markdown article now with an H1 title, "
+                            "a **TL;DR** section, practical sections, and a **Further reading** list. "
+                            "Do not mention tool usage."
+                        ),
+                    }
+                ],
+            }
+        ]
+        return ask_azure_foundry_with_web_search(
+            foundry_model=foundry_model,
+            post_fn=post_fn,
+            _extra_messages=fallback_instruction,
+        )
+    elif not markdown:
+        return markdown
+
+    lower = markdown.lower()
+    has_heading = "#" in markdown or lower.startswith("h1:")
+    has_tldr = "tl;dr" in lower
+    has_further = "further reading" in lower
+    tool_markup = "<|" in markdown or "web_search" in lower
+
+    if not _extra_messages and (not (has_heading and has_tldr and has_further) or tool_markup):
+        fallback_instruction = [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": (
+                            ("The previous response included raw tool-call markup." if tool_markup else "The previous response did not deliver the final Markdown article.")
+                            + " Web search is unavailable in this environment. Reply now with a complete Markdown post "
+                            "that includes an H1 title, a **TL;DR** section, practical sections, and a **Further reading** list. "
+                            "Do not emit tool-call markup, <|...|> tokens, or describe the attempt; output only the article."
+                        ),
+                    }
+                ],
+            }
+        ]
+        return ask_azure_foundry_with_web_search(
+            foundry_model=foundry_model,
+            post_fn=post_fn,
+            _extra_messages=fallback_instruction,
+        )
+
+    return markdown
 
 
 def ask_with_web_search():
@@ -236,16 +321,19 @@ def extract_title(md: str) -> str:
             return re.sub(r'[#*_`]+', '', line).strip()[:80]
     return "Daily AI Update"
 
-def write_post(markdown_body: str, used_model: str | None = None):
+def write_post(markdown_body: str, used_model: str | None = None, output_dir: Path | None = None):
     title = extract_title(markdown_body)
     slug  = slugify(title)[:80]
 
+    target_dir = output_dir or POSTS_DIR
+    target_dir.mkdir(parents=True, exist_ok=True)
+
     # Avoid duplicate per day
-    existing = list(POSTS_DIR.glob(f"{TODAY:%Y-%m-%d}-*.md"))
+    existing = list(target_dir.glob(f"{TODAY:%Y-%m-%d}-*.md"))
     if existing:
         slug += "-2"
 
-    path = POSTS_DIR / f"{TODAY:%Y-%m-%d}-{slug}.md"
+    path = target_dir / f"{TODAY:%Y-%m-%d}-{slug}.md"
 
     now_ny = datetime.datetime.now(ZoneInfo("America/New_York"))
     publish_dt = now_ny - datetime.timedelta(minutes=1)

@@ -1,12 +1,35 @@
 # Repository Guidelines
 
+## Azure AI SDK
+### Install the following dependencies: azure.identity and azure-ai-inference
+import os
+from azure.ai.inference import ChatCompletionsClient
+from azure.ai.inference.models import SystemMessage, UserMessage
+from azure.core.credentials import AzureKeyCredential
+
+endpoint = os.getenv("AZURE_INFERENCE_SDK_ENDPOINT", "https://my-ai-foundry-allnamestaken.services.ai.azure.com/models")
+model_name = os.getenv("DEPLOYMENT_NAME", "Llama-4-Maverick-17B-128E-Instruct-FP8")
+key = os.getenv("AZURE_INFERENCE_SDK_KEY", "YOUR_KEY_HERE")
+client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+response = client.complete(
+  messages=[
+    SystemMessage(content="You are a helpful assistant."),
+    UserMessage(content="What are 3 things to visit in Seattle?")
+  ],
+  model = model_name,
+  max_tokens=1000
+)
+
+print(response)
+
 ## Project Structure & Module Organization
 Jekyll powers this GitHub Pages blog. `_config.yml` controls metadata, `_includes/` holds partials, and `index.html` is the landing page. Assets sit in `assets/css/styles.css` and `assets/images/`. Automation lives under `scripts/`; sample posts for spot checks are in `tests/posts/`. The generator creates `_posts/` at runtime (left untracked); keep filenames `YYYY-MM-DD-title.md` so Jekyll picks them up.
 
 ## Build, Test, and Development Commands
 - `python -m venv .venv && source .venv/bin/activate` isolates dependencies.
 - `pip install -r requirements.txt` installs the Anthropics, Foundry, and slugify helpers.
-- `python scripts/generate_post_claude_websearch.py` generates a post; set `FOUNDARY_API_KEY`, `ENDPOINT_URL`, and optional `TOPIC_HINT` first.
+- `python scripts/generate_post_websearch.py` generates a post; set `FOUNDARY_API_KEY`, `ENDPOINT_URL`, and optional `TOPIC_HINT` first.
 - `bundle exec jekyll serve --livereload` previews the site locally after installing the `github-pages` gem.
 
 ## Coding Style & Naming Conventions
