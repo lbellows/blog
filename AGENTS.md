@@ -7,8 +7,8 @@ from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage
 from azure.core.credentials import AzureKeyCredential
 
-endpoint = os.getenv("AZURE_INFERENCE_SDK_ENDPOINT", "https://my-ai-foundry-allnamestaken.services.ai.azure.com/models")
-model_name = os.getenv("DEPLOYMENT_NAME", "Llama-4-Maverick-17B-128E-Instruct-FP8")
+endpoint = os.getenv("AZURE_INFERENCE_SDK_ENDPOINT", "https://xxx.services.ai.azure.com/models")
+model_name = os.getenv("DEPLOYMENT_NAME", "GPT-5")
 key = os.getenv("AZURE_INFERENCE_SDK_KEY", "YOUR_KEY_HERE")
 client = ChatCompletionsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
