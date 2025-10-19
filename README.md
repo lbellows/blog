@@ -39,6 +39,10 @@ Schedule & publish time: Adjust cron and the front-matter timestamp to your pref
 Manual test: Use the workflow’s Run workflow button to test once you add the secret.
 
 # TODO
+* remove AI instructions from post, example below on Oct 18, 2025
+```
+I’ll search for recent developments in AI, .NET, Azure, and GitHub that are relevant to developers. Now I have comprehensive, recent information from reputable sources. Let me synthesize this into a well-structured blog post for .NET engineers working with Azure and GitHub.
+```
 * use more breaking news: time box search to only include up to 36 hrs
 * less click baity titles
 * mix up content - breaking news + larger synopsis (ie. 2025 tips...) - 6:1
