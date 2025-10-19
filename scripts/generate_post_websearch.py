@@ -18,7 +18,7 @@ FOUNDARY_MODELS_DEFAULT = [
     "DeepSeek-V3.1",
     "gpt-5-mini",
     "gpt-oss-120b",
-    "Llama-4-Maverick-17B-128E-Instruct-FP8",
+    # "Llama-4-Maverick-17B-128E-Instruct-FP8",
 ]
 
 _allowed = [d.strip() for d in os.getenv("ALLOWED_DOMAINS", "").split(",") if d.strip()]
