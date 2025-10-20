@@ -9,10 +9,6 @@ tags:
 title: 'Azure AI and GitHub Copilot: What .NET Developers Need to Know in Late 2025'
 ---
 
-I'll search for recent AI developments relevant to .NET, Azure, and GitHub developers.
-Let me search for one more specific topic about semantic kernel or AI orchestration frameworks for .NET.
-Now I'll synthesize the information from these searches into a comprehensive blog post for .NET, Azure, and GitHub developers.
-
 # Azure AI and GitHub Copilot: What .NET Developers Need to Know in Late 2025
 
 **TL;DR**: Microsoft has unified its AI development stack with Azure AI Foundry SDK for .NET (in preview), expanded GitHub Copilot with app modernization agents in Visual Studio 2022 v17.14+, and introduced new Azure OpenAI API patterns. Key changes include keyless authentication via managed identity, new GPT-5 reasoning models, and Semantic Kernel reaching v1.0+ stability. If you're building AI-powered .NET apps, now is the time to consolidate around these tools.

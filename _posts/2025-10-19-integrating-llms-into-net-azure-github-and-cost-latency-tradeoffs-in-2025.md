@@ -9,9 +9,6 @@ tags:
 title: 'Integrating LLMs into .NET: Azure, GitHub, and Cost-Latency Tradeoffs in 2025'
 ---
 
-I'll search for recent AI developments relevant to .NET, Azure, GitHub, and LLM integration for developers.
-Now I have comprehensive, recent information from reputable sources. Let me synthesize this into a well-structured blog post for .NET developers.
-
 ---
 
 # Integrating LLMs into .NET: Azure, GitHub, and Cost-Latency Tradeoffs in 2025

@@ -10,9 +10,6 @@ title: 'Azure OpenAI v1 API, Responses API, and Model Context Protocol: What .NE
   Developers Need to Know'
 ---
 
-I'll search for recent AI developments relevant to .NET, Azure, GitHub, and LLM developers.
-Now I have comprehensive, recent information. Let me synthesize this into a blog post for .NET + Azure + GitHub developers.
-
 ---
 
 # Azure OpenAI v1 API, Responses API, and Model Context Protocol: What .NET Developers Need to Know

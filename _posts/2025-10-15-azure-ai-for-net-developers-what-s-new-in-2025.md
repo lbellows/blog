@@ -9,10 +9,6 @@ tags:
 title: 'Azure AI for .NET Developers: What''s New in 2025'
 ---
 
-I'll search for recent AI developments relevant to .NET, Azure, and GitHub developers.
-Now I'll search for one more topic to round out the coverage - specifically about Semantic Kernel and recent updates.
-Now I have comprehensive information from multiple sources. Let me synthesize this into a well-structured blog post for .NET developers working with Azure and GitHub.
-
 # Azure AI for .NET Developers: What's New in 2025
 
 **TL;DR**

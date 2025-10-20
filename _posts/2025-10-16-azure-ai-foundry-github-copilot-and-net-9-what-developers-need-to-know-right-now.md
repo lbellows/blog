@@ -10,9 +10,6 @@ title: 'Azure AI Foundry, GitHub Copilot, and .NET 9: What Developers Need to Kn
   Right Now'
 ---
 
-I'll search for recent AI developments relevant to .NET, Azure, and GitHub developers.
-Now I'll write a comprehensive blog post synthesizing these findings for .NET, Azure, and GitHub developers.
-
 # Azure AI Foundry, GitHub Copilot, and .NET 9: What Developers Need to Know Right Now
 
 **TL;DR**
