@@ -4,8 +4,9 @@ from zoneinfo import ZoneInfo
 import frontmatter
 from slugify import slugify
 import random
-import requests
 import json
+import requests
+
 
 # ---- Config from env ----
 TOPIC_HINT      = os.getenv("TOPIC_HINT", "Artificial Intelligence news for software engineers")
