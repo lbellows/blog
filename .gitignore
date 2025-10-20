@@ -1,2 +1,4 @@
+tests/posts/
 .env
 __pycache__/
+.venv/

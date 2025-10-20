@@ -1,0 +1,5 @@
+anthropic
+python-frontmatter
+python-slugify
+requests
+openai

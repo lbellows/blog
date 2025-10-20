@@ -5,6 +5,8 @@ Trying out some github pages features
 
 link: https://lbellows.github.io/blog/
 
+[Contributor guide →](AGENTS.md)
+
 # About AI blog posting
 
 I needed an easy solution for this because I was holding my daughter, so not too much typing could be involed:
