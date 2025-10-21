@@ -18,7 +18,7 @@ author_profile:
 # Project Pages (repo name = blog): url + baseurl must be set like this.
 # If you later switch to a user/organization site, change baseurl to "".
 url: "https://lbellows.github.io"
-baseurl: "/blog"
+baseurl: ""
 
 # =========================
 # Build & Markdown
