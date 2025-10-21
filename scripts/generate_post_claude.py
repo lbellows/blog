@@ -114,9 +114,9 @@ def write_post(markdown_body: str):
 
 def main():
     # Skip if a same-day post already exists (optional—comment out if you want multiple/day)
-    if list(POSTS_DIR.glob(f"{TODAY:%Y-%m-%d}-*.md")):
-        print("Post for today already exists. Exiting.")
-        return
+    # if list(POSTS_DIR.glob(f"{TODAY:%Y-%m-%d}-*.md")):
+    #     print("Post for today already exists. Exiting.")
+    #     return
 
     body = ask_claude_with_web_search()
     write_post(body)
