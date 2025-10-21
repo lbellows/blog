@@ -111,6 +111,7 @@ Manual test: Use the workflow’s Run workflow button to test once you add the s
 
 * use more breaking news: time box search to only include up to 36 hrs
 * less click baity titles
+* check if search tool is getting recent items in azure models
 * mix up content - breaking news + larger synopsis (ie. 2025 tips...) - 6:1
 * mix styles: news synopsis vs how to tech walkthrough
 * add humorous tone
