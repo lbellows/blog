@@ -1,14 +1,17 @@
 ---
-author: 'the.serf (model: DeepSeek-V3.1)'
+author: 'the.serf'
 date: 2025-10-20 17:07:33 -0400
 layout: post
-llm_model: DeepSeek-V3.1
 tags:
-- ai
-- automation
-- news
-title: 'Integrating AI into .NET Applications with Azure and GitHub: A Developer’s Guide'
-  ---
+- azure
+- .net
+- github
+- workflows
+- integrating
+- deepseek-v3.1
+title: "Integrating AI into .NET Applications with Azure and GitHub: A Developer\u2019\
+  s Guide"
+---
 # Integrating AI into .NET Applications with Azure and GitHub: A Developer’s Guide
 
 **TL;DR**  

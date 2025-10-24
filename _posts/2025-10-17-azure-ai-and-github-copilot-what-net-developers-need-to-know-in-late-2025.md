@@ -3,9 +3,12 @@ author: the.serf
 date: 2025-10-17 08:33:30 -0400
 layout: post
 tags:
-- ai
-- automation
-- news
+- azure
+- .net
+- github
+- copilot
+- api
+- claude-haiku-4-5-20251001
 title: 'Azure AI and GitHub Copilot: What .NET Developers Need to Know in Late 2025'
 ---
 # Azure AI and GitHub Copilot: What .NET Developers Need to Know in Late 2025

@@ -60,8 +60,11 @@ Tip: both generators automatically load a `.env` file at the repository root if 
 - `POST_WORDS_MAX` — maximum desired words in the generated post (int).
 - `RECENT_WINDOW_DAYS` — how many days back the web search should look when hunting for breaking news (int, defaults to `2`).
 - `TOPIC_URL` — optional primary link to anchor the article around (aliases: `TOPIC_LINK`, `SOURCE_LINK`).
+- Generated posts automatically add a `llm_model:<model>` tag (default `claude`) so you can filter by source model.
 
 These are defined as constants in `scripts/common/settings.py` and are no longer read from environment variables. Edit the constants directly if you need to change the publishing defaults.
+
+Tags are derived automatically from section headings/TL;DR content plus the model name (e.g., `claude`). No manual tag list is required.
 
 ## Add the secret to GitHub Actions (alternate: CLI)
 

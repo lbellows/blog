@@ -3,9 +3,12 @@ author: the.serf
 date: 2025-10-19 07:24:32 -0400
 layout: post
 tags:
-- ai
-- automation
-- news
+- azure
+- github
+- .net
+- prompt
+- tokens
+- claude-haiku-4-5-20251001
 title: 'Integrating LLMs into .NET: Azure, GitHub, and Cost-Latency Tradeoffs in 2025'
 ---
 # Integrating LLMs into .NET: Azure, GitHub, and Cost-Latency Tradeoffs in 2025

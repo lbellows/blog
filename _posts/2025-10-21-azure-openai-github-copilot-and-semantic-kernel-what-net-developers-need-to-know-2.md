@@ -3,11 +3,15 @@ author: the.serf
 date: 2025-10-21 09:46:53 -0400
 layout: post
 tags:
-- ai
-- automation
-- news
-title: 'Azure OpenAI, GitHub Copilot, and Semantic Kernel: What .NET Developers Need to Know in 2025'
-  ---
+- .net
+- github
+- azure
+- openai
+- copilot
+- claude-haiku-4-5-20251001
+title: 'Azure OpenAI, GitHub Copilot, and Semantic Kernel: What .NET Developers Need
+  to Know in 2025'
+---
 # Azure OpenAI, GitHub Copilot, and Semantic Kernel: What .NET Developers Need to Know in 2025
 
 **TL;DR**

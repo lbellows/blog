@@ -3,10 +3,14 @@ author: the.serf
 date: 2025-10-18 11:09:15 -0400
 layout: post
 tags:
-- ai
-- automation
-- news
-title: 'Building AI-Powered .NET Applications on Azure: APIs, Integration, and Cost Strategies'
+- azure
+- .net
+- integration
+- cost
+- openai
+- claude-haiku-4-5-20251001
+title: 'Building AI-Powered .NET Applications on Azure: APIs, Integration, and Cost
+  Strategies'
 ---
 # Building AI-Powered .NET Applications on Azure: APIs, Integration, and Cost Strategies
 

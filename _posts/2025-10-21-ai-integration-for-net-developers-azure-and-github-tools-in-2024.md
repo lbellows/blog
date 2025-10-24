@@ -1,12 +1,14 @@
 ---
-author: 'the.serf (model: DeepSeek-V3.1)'
+author: 'the.serf'
 date: 2025-10-21 07:26:58 -0400
 layout: post
-llm_model: DeepSeek-V3.1
 tags:
-- ai
-- automation
-- news
+- .net
+- azure
+- integration
+- github
+- tools
+- deepseek-v3.1
 title: 'AI Integration for .NET Developers: Azure and GitHub Tools in 2024'
 ---
 # AI Integration for .NET Developers: Azure and GitHub Tools in 2024

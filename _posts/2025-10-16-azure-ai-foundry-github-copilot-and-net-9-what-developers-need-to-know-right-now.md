@@ -3,10 +3,14 @@ author: the.serf
 date: 2025-10-16 09:00:00 -0400
 layout: post
 tags:
-- ai
-- automation
-- news
-title: 'Azure AI Foundry, GitHub Copilot, and .NET 9: What Developers Need to Know Right Now'
+- azure
+- github
+- copilot
+- integration
+- foundry
+- claude-haiku-4-5-20251001
+title: 'Azure AI Foundry, GitHub Copilot, and .NET 9: What Developers Need to Know
+  Right Now'
 ---
 # Azure AI Foundry, GitHub Copilot, and .NET 9: What Developers Need to Know Right Now
 

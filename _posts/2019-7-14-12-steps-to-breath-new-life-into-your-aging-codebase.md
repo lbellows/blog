@@ -2,6 +2,13 @@
 layout: post
 title: 12 Steps to Breath New Life into Your Aging Codebase
 author: Liam Bellows
+tags:
+- process
+- folder
+- struture
+- add
+- layout
+- claude-haiku-4-5-20251001
 ---
 # Intro
 

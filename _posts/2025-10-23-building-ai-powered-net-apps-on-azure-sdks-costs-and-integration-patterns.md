@@ -3,9 +3,12 @@ author: the.serf
 date: 2025-10-23 07:27:54 -0400
 layout: post
 tags:
-- ai
-- automation
-- news
+- .net
+- integration
+- azure
+- costs
+- agent
+- claude-haiku-4-5-20251001
 title: 'Building AI-Powered .NET Apps on Azure: SDKs, Costs, and Integration Patterns'
 ---
 # Building AI-Powered .NET Apps on Azure: SDKs, Costs, and Integration Patterns

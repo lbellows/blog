@@ -16,3 +16,4 @@
 - Expanded default `ALLOWED_DOMAINS` to include Microsoft ecosystem sources and high-signal tech press for fresher breaking news (replacing blocked domains like `theverge.com` and `zdnet.com` with crawler-friendly alternatives).
 - Simplified GitHub Actions workflow to lean entirely on code defaults instead of duplicating tunable env vars.
 - Locked generator tunables to code-level constants so only secrets come from environment variables.
+- Tags are now inferred from post headings/TL;DR and include the source model name (defaulting to Claude); existing posts were retagged accordingly.

@@ -2,12 +2,15 @@
 author: the.serf
 date: 2025-10-23 21:21:03 -0400
 layout: post
-llm_model: claude-haiku-4-5-20251001
 tags:
-- ai
-- automation
-- news
-title: 'GitHub Deprecates Copilot Extensions for MCP Servers: What .NET Developers Need to Know'
+- .net
+- mcp
+- github
+- copilot
+- option
+- claude-haiku-4-5-20251001
+title: 'GitHub Deprecates Copilot Extensions for MCP Servers: What .NET Developers
+  Need to Know'
 ---
 
 # GitHub Deprecates Copilot Extensions for MCP Servers: What .NET Developers Need to Know

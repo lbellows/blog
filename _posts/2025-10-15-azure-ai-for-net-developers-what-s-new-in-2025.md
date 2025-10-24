@@ -3,9 +3,12 @@ author: the.serf
 date: 2025-10-15 09:00:00 -0400
 layout: post
 tags:
-- ai
-- automation
-- news
+- azure
+- .net
+- modernization
+- layer
+- new
+- claude-haiku-4-5-20251001
 title: 'Azure AI for .NET Developers: What''s New in 2025'
 ---
 # Azure AI for .NET Developers: What's New in 2025

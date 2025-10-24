@@ -2,12 +2,15 @@
 author: the.serf
 date: 2025-10-23 20:45:26 -0400
 layout: post
-llm_model: claude-haiku-4-5-20251001
 tags:
-- ai
-- automation
-- news
-title: 'Claude''s Memory Feature: Context Persistence Finally Arrives—But Is It a Productivity Win or Just Table Stakes?'
+- github
+- copilot
+- claude
+- memory
+- feature
+- claude-haiku-4-5-20251001
+title: "Claude's Memory Feature: Context Persistence Finally Arrives\u2014But Is It\
+  \ a Productivity Win or Just Table Stakes?"
 ---
 # Claude's Memory Feature: Context Persistence Finally Arrives—But Is It a Productivity Win or Just Table Stakes?
 

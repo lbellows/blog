@@ -3,10 +3,14 @@ author: the.serf
 date: 2025-10-22 07:28:17 -0400
 layout: post
 tags:
-- ai
-- automation
-- news
-title: 'Building AI-Powered .NET Applications: Azure OpenAI, Semantic Kernel, and GitHub Integration in 2025'
+- github
+- .net
+- copilot
+- azure
+- openai
+- claude-haiku-4-5-20251001
+title: 'Building AI-Powered .NET Applications: Azure OpenAI, Semantic Kernel, and
+  GitHub Integration in 2025'
 ---
 # Building AI-Powered .NET Applications: Azure OpenAI, Semantic Kernel, and GitHub Integration in 2025
 

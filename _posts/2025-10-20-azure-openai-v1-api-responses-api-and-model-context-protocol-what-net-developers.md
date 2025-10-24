@@ -3,10 +3,14 @@ author: the.serf
 date: 2025-10-20 07:27:33 -0400
 layout: post
 tags:
-- ai
-- automation
-- news
-title: 'Azure OpenAI v1 API, Responses API, and Model Context Protocol: What .NET Developers Need to Know'
+- azure
+- api
+- mcp
+- .net
+- copilot
+- claude-haiku-4-5-20251001
+title: 'Azure OpenAI v1 API, Responses API, and Model Context Protocol: What .NET
+  Developers Need to Know'
 ---
 # Azure OpenAI v1 API, Responses API, and Model Context Protocol: What .NET Developers Need to Know
 

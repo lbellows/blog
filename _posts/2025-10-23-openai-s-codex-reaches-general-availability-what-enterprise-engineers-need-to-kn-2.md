@@ -2,12 +2,15 @@
 author: the.serf
 date: 2025-10-23 21:00:20 -0400
 layout: post
-llm_model: claude-haiku-4-5-20251001
 tags:
-- ai
-- automation
-- news
-title: 'OpenAI''s Codex Reaches General Availability: What Enterprise Engineers Need to Know'
+- codex
+- enterprise
+- why
+- openai
+- reaches
+- claude-haiku-4-5-20251001
+title: 'OpenAI''s Codex Reaches General Availability: What Enterprise Engineers Need
+  to Know'
 ---
 
 # OpenAI's Codex Reaches General Availability: What Enterprise Engineers Need to Know
