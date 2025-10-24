@@ -1,3 +1,6 @@
+# Startup routine
+Check for TODOs in the README. Once a TODO is complete, add an entry to CHANGELOG.md (linked from README) with a short descrition of the change. If none are found or all are complete ask for instructions.
+
 # Repository Guidelines
 
 ## Azure AI SDK

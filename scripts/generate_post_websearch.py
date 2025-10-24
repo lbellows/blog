@@ -10,9 +10,11 @@ import requests
 
 # ---- Config from env ----
 TOPIC_HINT      = os.getenv("TOPIC_HINT", "Artificial Intelligence news for software engineers")
+TOPIC_URL       = os.getenv("TOPIC_URL") or os.getenv("TOPIC_LINK") or os.getenv("SOURCE_LINK")
 POST_WORDS_MIN  = int(os.getenv("POST_WORDS_MIN", "200"))
 POST_WORDS_MAX  = int(os.getenv("POST_WORDS_MAX", "800"))
 MAX_SEARCHES    = int(os.getenv("MAX_SEARCHES", "5"))
+RECENT_WINDOW_DAYS = int(os.getenv("RECENT_WINDOW_DAYS", "2"))
 
 # Default Foundry models (from your screenshot). You can override via FOUNDARY_MODELS env var (comma-separated).
 FOUNDARY_MODELS_DEFAULT = [
@@ -26,6 +28,49 @@ _allowed = [d.strip() for d in os.getenv("ALLOWED_DOMAINS", "").split(",") if d.
 _blocked = [d.strip() for d in os.getenv("BLOCKED_DOMAINS", "").split(",") if d.strip()]
 
 TODAY = datetime.date.today()
+RECENT_START_DATE = TODAY - datetime.timedelta(days=RECENT_WINDOW_DAYS)
+WEEKDAY_INDEX = TODAY.weekday()  # Monday=0
+IS_SUNDAY = WEEKDAY_INDEX == 6
+
+if IS_SUNDAY:
+    MODE_INSTRUCTIONS = (
+        "Sunday is synopsis day: weave the freshest breaking stories into a cohesive weekly roundup "
+        "that also previews what's next (e.g., 2025 readiness tips, roadmap considerations)."
+    )
+else:
+    MODE_INSTRUCTIONS = (
+        f"Pick one laser-focused story or product update from the last {RECENT_WINDOW_DAYS} day(s) "
+        "and dive deep into its implications. Avoid broad grab-bag summaries."
+    )
+
+TECH_GUIDANCE = (
+    "Highlight at least one of these ecosystems where relevant: .NET, Azure, or GitHub. "
+    "Choose whichever best fits the story; covering all three is optional."
+)
+HUMOR_GUIDANCE = (
+    "Keep the tone professional yet witty—sprinkle in light, tasteful humor or asides that help the reader stay engaged."
+)
+IMAGE_GUIDANCE = (
+    "Embed at least one Markdown image that works as a meme (reuse assets/images/robot.webp or another credited meme) "
+    "with a descriptive, humorous alt text."
+)
+
+USER_INSTRUCTION_ITEMS = [
+    f"Use the web_search tool to find 4-6 fresh, reputable sources published between {RECENT_START_DATE.isoformat()} and {TODAY.isoformat()} (or as close as possible).",
+    MODE_INSTRUCTIONS,
+    "Synthesize the key points that matter to engineers (cost, latency, APIs, integration steps).",
+    "Cite sources inline where appropriate and list all links at the end in a 'Further reading' list.",
+]
+
+if TOPIC_URL:
+    USER_INSTRUCTION_ITEMS.insert(
+        2,
+        "Treat the primary requested link as the anchor narrative—summarize it first, then expand with corroborating context."
+    )
+
+USER_INSTRUCTION_TEXT = "\n".join(f"{idx + 1}) {item}" for idx, item in enumerate(USER_INSTRUCTION_ITEMS))
+PRIMARY_LINK_LINE = f"Primary requested link: {TOPIC_URL}\n" if TOPIC_URL else ""
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 POSTS_DIR  = REPO_ROOT / "_posts"
 POSTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -38,6 +83,9 @@ that impact developers. Then write a grounded Markdown blog post with:
 - A single H1 title on the first line (non-clickbait, specific).
 - A short **TL;DR** section.
 - Clear sections with practical takeaways (code or CLI snippets welcome).
+- {TECH_GUIDANCE}
+- {HUMOR_GUIDANCE}
+- {IMAGE_GUIDANCE}
 - Cautious language for claims; avoid speculation and hallucinations.
 - A **Further reading** section listing all source links as plain URLs.
 
@@ -48,11 +96,10 @@ If the web_search tool is unavailable, do not emit tool-call markup (e.g., <|sta
 
 USER_PROMPT = f"""
 Topic focus / audience: {TOPIC_HINT}
+{PRIMARY_LINK_LINE}
 
 Instructions:
-1) Use the web_search tool to find 4-6 fresh, reputable sources (last few days/weeks).
-2) Synthesize the key points that matter to engineers (cost, latency, APIs, integration steps).
-3) Cite sources inline where appropriate and list all links at the end in a 'Further reading' list.
+{USER_INSTRUCTION_TEXT}
 """
 
 def ask_azure_foundry_with_web_search(foundry_model: str | None = None, post_fn=None, _extra_messages=None):

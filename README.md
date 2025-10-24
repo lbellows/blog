@@ -6,6 +6,7 @@ Trying out some github pages features
 link: https://lbellows.github.io/blog/
 
 [Contributor guide →](AGENTS.md)
+[Changelog →](CHANGELOG.md)
 
 # About AI blog posting
 
@@ -62,6 +63,8 @@ python scripts/generate_post_claude_websearch.py
 - `BLOCKED_DOMAINS` — comma-separated domains to avoid (optional).
 - `POST_WORDS_MIN` — minimum desired words in the generated post (int).
 - `POST_WORDS_MAX` — maximum desired words in the generated post (int).
+- `RECENT_WINDOW_DAYS` — how many days back the web search should look when hunting for breaking news (int, defaults to `2`).
+- `TOPIC_URL` — optional primary link to anchor the article around (aliases: `TOPIC_LINK`, `SOURCE_LINK`).
 
 These are defined in the `env:` section of `.github/workflows/daily-post-rag.yml`; edit those values to tune scheduled runs.
 
@@ -107,14 +110,18 @@ Schedule & publish time: Adjust cron and the front-matter timestamp to your pref
 
 Manual test: Use the workflow’s Run workflow button to test once you add the secret.
 
+# Content cadence & tone
+
+- Weekday posts now dive deep on one breaking story from the most recent `RECENT_WINDOW_DAYS` window.
+- Sunday runs switch to a weekly synopsis that blends news and forward-looking tips (e.g., 2025 planning).
+- Each post highlights at least one of .NET, Azure, or GitHub while keeping a light, professional sense of humor.
+- The generator prompts for a meme image (reuse `assets/images/robot.webp` for now) to keep things playful.
+
 # TODO
 
-* use more breaking news: time box search to only include up to 36 hrs
-* less click baity titles
+
+
+# Future
+
 * check if search tool is getting recent items in azure models
-* mix up content - breaking news + larger synopsis (ie. 2025 tips...) - 6:1
-* mix styles: news synopsis vs how to tech walkthrough
-* add humorous tone
-* add images (memes)
-* workflow to create article based on specific topic or link
 * figure out how to monetize
