@@ -6,7 +6,8 @@ tags:
 - ai
 - automation
 - news
-title: 'Azure AI for .NET Developers: What''s New in 2025'---
+title: 'Azure AI for .NET Developers: What''s New in 2025'
+---
 # Azure AI for .NET Developers: What's New in 2025
 
 **TL;DR**

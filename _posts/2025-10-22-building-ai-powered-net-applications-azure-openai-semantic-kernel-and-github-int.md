@@ -6,8 +6,8 @@ tags:
 - ai
 - automation
 - news
-title: 'Building AI-Powered .NET Applications: Azure OpenAI, Semantic Kernel, and
-  GitHub Integration in 2025'---
+title: 'Building AI-Powered .NET Applications: Azure OpenAI, Semantic Kernel, and GitHub Integration in 2025'
+---
 # Building AI-Powered .NET Applications: Azure OpenAI, Semantic Kernel, and GitHub Integration in 2025
 
 ## TL;DR

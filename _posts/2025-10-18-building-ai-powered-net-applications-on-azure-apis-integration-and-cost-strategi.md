@@ -6,8 +6,8 @@ tags:
 - ai
 - automation
 - news
-title: 'Building AI-Powered .NET Applications on Azure: APIs, Integration, and Cost
-  Strategies'---
+title: 'Building AI-Powered .NET Applications on Azure: APIs, Integration, and Cost Strategies'
+---
 # Building AI-Powered .NET Applications on Azure: APIs, Integration, and Cost Strategies
 
 ## TL;DR

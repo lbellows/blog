@@ -7,8 +7,7 @@ tags:
 - ai
 - automation
 - news
-title: 'GitHub Deprecates Copilot Extensions for MCP Servers: What .NET Developers
-  Need to Know'
+title: 'GitHub Deprecates Copilot Extensions for MCP Servers: What .NET Developers Need to Know'
 ---
 
 # GitHub Deprecates Copilot Extensions for MCP Servers: What .NET Developers Need to Know

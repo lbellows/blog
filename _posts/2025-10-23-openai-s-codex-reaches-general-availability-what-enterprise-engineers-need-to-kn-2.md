@@ -7,8 +7,7 @@ tags:
 - ai
 - automation
 - news
-title: 'OpenAI''s Codex Reaches General Availability: What Enterprise Engineers Need
-  to Know'
+title: 'OpenAI''s Codex Reaches General Availability: What Enterprise Engineers Need to Know'
 ---
 
 # OpenAI's Codex Reaches General Availability: What Enterprise Engineers Need to Know

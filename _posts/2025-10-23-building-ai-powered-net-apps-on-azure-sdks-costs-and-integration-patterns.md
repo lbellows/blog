@@ -6,7 +6,8 @@ tags:
 - ai
 - automation
 - news
-title: 'Building AI-Powered .NET Apps on Azure: SDKs, Costs, and Integration Patterns'---
+title: 'Building AI-Powered .NET Apps on Azure: SDKs, Costs, and Integration Patterns'
+---
 # Building AI-Powered .NET Apps on Azure: SDKs, Costs, and Integration Patterns
 
 **TL;DR**
