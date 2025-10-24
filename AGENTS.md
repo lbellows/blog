@@ -3,6 +3,11 @@ Check for TODOs in the README. Once a TODO is complete, add an entry to CHANGELO
 
 # Repository Guidelines
 
+## Generators & Shared Utilities
+- Anthropic workflow entry point: `scripts/generate_post_claude.py`
+- Azure Foundry workflow entry point: `scripts/generate_post_websearch.py`
+- Shared prompt/cadence/meme helpers live under `scripts/common/` (always update these rather than duplicating logic).
+
 ## Azure AI SDK
 ### Install the following dependencies: azure.identity and azure-ai-inference
 import os
@@ -32,7 +37,8 @@ Jekyll powers this GitHub Pages blog. `_config.yml` controls metadata, `_include
 ## Build, Test, and Development Commands
 - `python -m venv .venv && source .venv/bin/activate` isolates dependencies.
 - `pip install -r requirements.txt` installs the Anthropics, Foundry, and slugify helpers.
-- `python scripts/generate_post_websearch.py` generates a post; set `FOUNDARY_API_KEY`, `ENDPOINT_URL`, and optional `TOPIC_HINT` first.
+- `python scripts/generate_post_claude.py` generates a post using Anthropic; export `ANTHROPIC_API_KEY` (plus `TOPIC_HINT`, etc.) first.
+- `python scripts/generate_post_websearch.py` generates a post using Azure Foundry; set `FOUNDARY_API_KEY`, `ENDPOINT_URL`, and optional `TOPIC_HINT` first.
 - `bundle exec jekyll serve --livereload` previews the site locally after installing the `github-pages` gem.
 
 ## Coding Style & Naming Conventions

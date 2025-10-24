@@ -3,3 +3,5 @@ python-frontmatter
 python-slugify
 requests
 openai
+Pillow
+python-dotenv

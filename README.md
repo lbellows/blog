@@ -31,8 +31,10 @@ cd blog
 
 ## Where the workflow and generator live
 
-- Generator script: `scripts/generate_post_claude_websearch.py`
+- Anthropic generator: `scripts/generate_post_claude.py`
+- Azure Foundry generator: `scripts/generate_post_websearch.py`
 - Scheduled workflow: `.github/workflows/daily-post-rag.yml`
+- Shared helpers for prompts, cadence, and memes: `scripts/common/`
 
 ## Run the generator locally (for testing)
 
@@ -40,10 +42,10 @@ Install the same dependencies the workflow uses and run the script with your Ant
 
 ```sh
 python -m pip install --upgrade pip
-pip install anthropic python-frontmatter python-slugify pyyaml
+pip install anthropic python-frontmatter python-slugify pyyaml Pillow
 
 export ANTHROPIC_API_KEY="sk-..."
-python scripts/generate_post_claude_websearch.py
+python scripts/generate_post_claude.py
 ```
 
 You can also export tunables for a single run (these are the same env names used in the workflow):
@@ -52,8 +54,10 @@ You can also export tunables for a single run (these are the same env names used
 export TOPIC_HINT="Security + AI + .NET"
 export MAX_SEARCHES=8
 export ALLOWED_DOMAINS="learn.microsoft.com,arxiv.org"
-python scripts/generate_post_claude_websearch.py
+python scripts/generate_post_claude.py
 ```
+
+Tip: both generators automatically load a `.env` file at the repository root if it exists, so you can keep secrets there for local runs.
 
 ## Tunables (names used in the workflow and what they do)
 
@@ -65,6 +69,7 @@ python scripts/generate_post_claude_websearch.py
 - `POST_WORDS_MAX` — maximum desired words in the generated post (int).
 - `RECENT_WINDOW_DAYS` — how many days back the web search should look when hunting for breaking news (int, defaults to `2`).
 - `TOPIC_URL` — optional primary link to anchor the article around (aliases: `TOPIC_LINK`, `SOURCE_LINK`).
+- Meme output lives under `assets/images/memes/` and is auto-generated per post.
 
 These are defined in the `env:` section of `.github/workflows/daily-post-rag.yml`; edit those values to tune scheduled runs.
 
@@ -116,10 +121,11 @@ Manual test: Use the workflow’s Run workflow button to test once you add the s
 - Sunday runs switch to a weekly synopsis that blends news and forward-looking tips (e.g., 2025 planning).
 - Each post highlights at least one of .NET, Azure, or GitHub while keeping a light, professional sense of humor.
 - The generator prompts for a meme image (reuse `assets/images/robot.webp` for now) to keep things playful.
+- During generation a contextual meme is rendered from `assets/images/robot.webp` with captions pulled from the title and TL;DR.
 
 # TODO
-
-
+* remove LLM instructions that are in the beginning of most posts. Please ensure these are not added to future posts.
+* expand list of allowed sites so that we can obtain more breaking news.
 
 # Future
 
