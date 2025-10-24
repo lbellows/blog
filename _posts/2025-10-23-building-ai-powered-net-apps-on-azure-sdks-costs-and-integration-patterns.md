@@ -6,14 +6,7 @@ tags:
 - ai
 - automation
 - news
-title: 'Building AI-Powered .NET Apps on Azure: SDKs, Costs, and Integration Patterns'
----
-
-I'll search for recent AI developments relevant to .NET, Azure, GitHub, and LLM integration for developers.
-Now I'll write a comprehensive blog post synthesizing these findings for .NET developers working with Azure and GitHub.
-
----
-
+title: 'Building AI-Powered .NET Apps on Azure: SDKs, Costs, and Integration Patterns'---
 # Building AI-Powered .NET Apps on Azure: SDKs, Costs, and Integration Patterns
 
 **TL;DR**

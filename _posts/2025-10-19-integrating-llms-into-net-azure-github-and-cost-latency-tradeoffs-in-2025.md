@@ -6,11 +6,7 @@ tags:
 - ai
 - automation
 - news
-title: 'Integrating LLMs into .NET: Azure, GitHub, and Cost-Latency Tradeoffs in 2025'
----
-
----
-
+title: 'Integrating LLMs into .NET: Azure, GitHub, and Cost-Latency Tradeoffs in 2025'---
 # Integrating LLMs into .NET: Azure, GitHub, and Cost-Latency Tradeoffs in 2025
 
 **TL;DR**  

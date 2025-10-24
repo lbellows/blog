@@ -63,13 +63,12 @@ Tip: both generators automatically load a `.env` file at the repository root if 
 
 - `TOPIC_HINT` — short instruction describing audience/angle (example: "AI + .NET + Azure + GitHub + LLM").
 - `MAX_SEARCHES` — maximum number of web-search calls the model may perform (integer).
-- `ALLOWED_DOMAINS` — comma-separated domains to bias results toward (optional).
+- `ALLOWED_DOMAINS` — comma-separated domains to bias results toward (optional). Defaults include Microsoft/GitHub properties plus tech press (`learn.microsoft.com`, `azure.microsoft.com`, `techcommunity.microsoft.com`, `blogs.microsoft.com`, `devblogs.microsoft.com`, `developer.microsoft.com`, `github.blog`, `techcrunch.com`, `venturebeat.com`, `infoq.com`).
 - `BLOCKED_DOMAINS` — comma-separated domains to avoid (optional).
 - `POST_WORDS_MIN` — minimum desired words in the generated post (int).
 - `POST_WORDS_MAX` — maximum desired words in the generated post (int).
 - `RECENT_WINDOW_DAYS` — how many days back the web search should look when hunting for breaking news (int, defaults to `2`).
 - `TOPIC_URL` — optional primary link to anchor the article around (aliases: `TOPIC_LINK`, `SOURCE_LINK`).
-- Meme output lives under `assets/images/memes/` and is auto-generated per post.
 
 These are defined in the `env:` section of `.github/workflows/daily-post-rag.yml`; edit those values to tune scheduled runs.
 
@@ -80,7 +79,7 @@ TOPIC_HINT: "Security + AI + .NET"
 MAX_SEARCHES: "8"
 POST_WORDS_MIN: "300"
 POST_WORDS_MAX: "1200"
-ALLOWED_DOMAINS: "learn.microsoft.com,arxiv.org"
+ALLOWED_DOMAINS: "learn.microsoft.com,arxiv.org,techcrunch.com"
 BLOCKED_DOMAINS: "example.com"
 ```
 
@@ -123,11 +122,8 @@ Manual test: Use the workflow’s Run workflow button to test once you add the s
 - The generator prompts for a meme image (reuse `assets/images/robot.webp` for now) to keep things playful.
 - During generation a contextual meme is rendered from `assets/images/robot.webp` with captions pulled from the title and TL;DR.
 
-# TODO
-* remove LLM instructions that are in the beginning of most posts. Please ensure these are not added to future posts.
-* expand list of allowed sites so that we can obtain more breaking news.
-
 # Future
 
 * check if search tool is getting recent items in azure models
 * figure out how to monetize
+* revisit automatic meme generation once styling and asset library are settled

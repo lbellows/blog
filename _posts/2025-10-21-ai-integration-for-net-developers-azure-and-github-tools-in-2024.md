@@ -7,9 +7,7 @@ tags:
 - ai
 - automation
 - news
-title: 'AI Integration for .NET Developers: Azure and GitHub Tools in 2024'
----
-
+title: 'AI Integration for .NET Developers: Azure and GitHub Tools in 2024'---
 # AI Integration for .NET Developers: Azure and GitHub Tools in 2024
 
 **TL;DR**  

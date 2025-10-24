@@ -7,14 +7,7 @@ tags:
 - automation
 - news
 title: 'Azure OpenAI, GitHub Copilot, and Semantic Kernel: What .NET Developers Need
-  to Know in 2025'
----
-
-I'll search for recent AI developments relevant to .NET, Azure, GitHub, and LLM developers.
-Now I have comprehensive, recent information. Let me synthesize this into a practical blog post for .NET/Azure/GitHub developers.
-
----
-
+  to Know in 2025'---
 # Azure OpenAI, GitHub Copilot, and Semantic Kernel: What .NET Developers Need to Know in 2025
 
 **TL;DR**

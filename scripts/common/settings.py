@@ -12,6 +12,18 @@ except ImportError:  # pragma: no cover - dotenv optional at import time
     load_dotenv = None  # type: ignore
 
 DEFAULT_REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_ALLOWED_DOMAINS = [
+    "learn.microsoft.com",
+    "azure.microsoft.com",
+    "techcommunity.microsoft.com",
+    "blogs.microsoft.com",
+    "devblogs.microsoft.com",
+    "github.blog",
+    "developer.microsoft.com",
+    "techcrunch.com",
+    "venturebeat.com",
+    "infoq.com",
+]
 _DOTENV_LOADED = False
 
 
@@ -60,7 +72,18 @@ def load_generation_settings() -> GenerationSettings:
     max_searches = int(os.getenv("MAX_SEARCHES", "5"))
     recent_window_days = int(os.getenv("RECENT_WINDOW_DAYS", "2"))
 
-    allowed = _split_domains(os.getenv("ALLOWED_DOMAINS"))
+    allowed_env = _split_domains(os.getenv("ALLOWED_DOMAINS"))
+    allowed = allowed_env or DEFAULT_ALLOWED_DOMAINS.copy()
+    if allowed_env:
+        # ensure no duplicates while preserving declared order
+        seen = set()
+        deduped = []
+        for domain in allowed_env + DEFAULT_ALLOWED_DOMAINS:
+            if domain and domain not in seen:
+                seen.add(domain)
+                deduped.append(domain)
+        allowed = deduped
+
     blocked = _split_domains(os.getenv("BLOCKED_DOMAINS"))
 
     return GenerationSettings(

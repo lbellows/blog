@@ -7,9 +7,7 @@ tags:
 - automation
 - news
 title: 'Azure AI Foundry, GitHub Copilot, and .NET 9: What Developers Need to Know
-  Right Now'
----
-
+  Right Now'---
 # Azure AI Foundry, GitHub Copilot, and .NET 9: What Developers Need to Know Right Now
 
 **TL;DR**

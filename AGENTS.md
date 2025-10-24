@@ -1,5 +1,5 @@
 # Startup routine
-Check for TODOs in the README. Once a TODO is complete, add an entry to CHANGELOG.md (linked from README) with a short descrition of the change. If none are found or all are complete ask for instructions.
+Check for TODOs in the README. Once a TODO is complete, remove from the README and add an entry to CHANGELOG.md (linked from README) with a short description of the change. If none are found or all are complete ask for instructions.
 
 # Repository Guidelines
 
@@ -40,6 +40,7 @@ Jekyll powers this GitHub Pages blog. `_config.yml` controls metadata, `_include
 - `python scripts/generate_post_claude.py` generates a post using Anthropic; export `ANTHROPIC_API_KEY` (plus `TOPIC_HINT`, etc.) first.
 - `python scripts/generate_post_websearch.py` generates a post using Azure Foundry; set `FOUNDARY_API_KEY`, `ENDPOINT_URL`, and optional `TOPIC_HINT` first.
 - `bundle exec jekyll serve --livereload` previews the site locally after installing the `github-pages` gem.
+- Default allowed domains already bias search toward Microsoft/.NET/GitHub announcements and reputable tech press; override `ALLOWED_DOMAINS` only when you need a narrower set.
 
 ## Coding Style & Naming Conventions
 Follow PEP 8: four-space indentation, snake_case functions, and UPPER_SNAKE_CASE env keys. Keep helpers pure and return text, as `parse_foundry_response_dict` does. Generated front matter should mimic `tests/posts/test-post.md`, using lowercase tags and minimal quoting. CSS stays in one file—use descriptive classes such as `.post-summary` and cluster overrides by feature.

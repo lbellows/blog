@@ -7,11 +7,7 @@ tags:
 - automation
 - news
 title: 'Azure OpenAI v1 API, Responses API, and Model Context Protocol: What .NET
-  Developers Need to Know'
----
-
----
-
+  Developers Need to Know'---
 # Azure OpenAI v1 API, Responses API, and Model Context Protocol: What .NET Developers Need to Know
 
 **TL;DR**

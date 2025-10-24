@@ -1,9 +1,7 @@
 ---
 layout: post
 title: 12 Steps to Breath New Life into Your Aging Codebase
-author: Liam Bellows
----
-
+author: Liam Bellows---
 # Intro
 
 Note: My intention is not to put down the current codebase but to identify specific reasons why I did what I did. I understand how sometimes even good coders can end up with a non-optimal solution due to things evolving over years and years.

@@ -8,9 +8,7 @@ tags:
 - automation
 - news
 title: 'Integrating AI into .NET Applications with Azure and GitHub: A Developer’s
-  Guide'
----
-
+  Guide'---
 # Integrating AI into .NET Applications with Azure and GitHub: A Developer’s Guide
 
 **TL;DR**  

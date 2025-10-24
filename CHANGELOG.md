@@ -12,3 +12,5 @@
 - Allow workflow input to drive a specific topic or link (`TOPIC_URL`).
 - Refactored generators to consume shared prompt, cadence, and meme utilities in `scripts/common/` for both Anthropic and Azure workflows.
 - Automatically load local `.env` files when running generators to simplify secret management.
+- Strip leading LLM instruction blocks before writing posts so published articles start at the H1 title.
+- Expanded default `ALLOWED_DOMAINS` to include Microsoft ecosystem sources and high-signal tech press for fresher breaking news (replacing blocked domains like `theverge.com` and `zdnet.com` with crawler-friendly alternatives).

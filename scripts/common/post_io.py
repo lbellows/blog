@@ -18,6 +18,7 @@ from .settings import GenerationSettings, today_date
 
 
 def extract_title(markdown_body: str) -> str:
+    markdown_body = markdown_body.lstrip()
     match = re.search(r'^\s*#\s+(.+)$', markdown_body, re.M)
     if match:
         return match.group(1).strip()
@@ -35,6 +36,25 @@ def _posts_dir(settings: GenerationSettings, override_dir: Path | None) -> Path:
     return path
 
 
+def _strip_leading_instructions(markdown_body: str) -> str:
+    lines = markdown_body.splitlines()
+    cleaned: list[str] = []
+    found_heading = False
+    for line in lines:
+        if not found_heading:
+            if line.strip().startswith("#"):
+                found_heading = True
+                cleaned.append(line)
+            else:
+                # drop preamble lines (LLM instructions, etc.)
+                continue
+        else:
+            cleaned.append(line)
+    if found_heading:
+        return "\n".join(cleaned).lstrip("\n")
+    return markdown_body.strip()
+
+
 def write_post(
     markdown_body: str,
     settings: GenerationSettings,
@@ -44,10 +64,12 @@ def write_post(
     tags: Sequence[str] | None = None,
     output_dir: Path | None = None,
     today: datetime.date | None = None,
-    enable_meme: bool = True,
+    enable_meme: bool = False,
     include_llm_model: bool = False,
     extra_front_matter: Optional[Dict[str, str]] = None,
 ) -> Tuple[Path, Optional[str]]:
+    markdown_body = _strip_leading_instructions(markdown_body)
+
     current_day = today or today_date()
     posts_dir = _posts_dir(settings, output_dir)
     posts_dir.mkdir(parents=True, exist_ok=True)
