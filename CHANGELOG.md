@@ -14,3 +14,5 @@
 - Automatically load local `.env` files when running generators to simplify secret management.
 - Strip leading LLM instruction blocks before writing posts so published articles start at the H1 title.
 - Expanded default `ALLOWED_DOMAINS` to include Microsoft ecosystem sources and high-signal tech press for fresher breaking news (replacing blocked domains like `theverge.com` and `zdnet.com` with crawler-friendly alternatives).
+- Simplified GitHub Actions workflow to lean entirely on code defaults instead of duplicating tunable env vars.
+- Locked generator tunables to code-level constants so only secrets come from environment variables.

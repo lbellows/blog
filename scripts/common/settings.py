@@ -12,6 +12,11 @@ except ImportError:  # pragma: no cover - dotenv optional at import time
     load_dotenv = None  # type: ignore
 
 DEFAULT_REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_TOPIC_HINT = "Artificial Intelligence news for software engineers shipping on .NET, Azure, and GitHub."
+DEFAULT_POST_WORDS_MIN = 200
+DEFAULT_POST_WORDS_MAX = 800
+DEFAULT_MAX_SEARCHES = 5
+DEFAULT_RECENT_WINDOW_DAYS = 2
 DEFAULT_ALLOWED_DOMAINS = [
     "learn.microsoft.com",
     "azure.microsoft.com",
@@ -24,6 +29,8 @@ DEFAULT_ALLOWED_DOMAINS = [
     "venturebeat.com",
     "infoq.com",
 ]
+DEFAULT_BLOCKED_DOMAINS: list[str] = []
+DEFAULT_TOPIC_URL: Optional[str] = None
 _DOTENV_LOADED = False
 
 
@@ -52,49 +59,18 @@ class GenerationSettings:
     repo_root: Path = field(default_factory=lambda: DEFAULT_REPO_ROOT)
 
 
-def _split_domains(value: str | None) -> list[str]:
-    if not value:
-        return []
-    return [domain.strip() for domain in value.split(",") if domain.strip()]
-
-
 def load_generation_settings() -> GenerationSettings:
     _ensure_dotenv_loaded(DEFAULT_REPO_ROOT)
 
-    topic_hint = os.getenv("TOPIC_HINT", "Artificial Intelligence news for software engineers")
-    topic_url = (
-        os.getenv("TOPIC_URL")
-        or os.getenv("TOPIC_LINK")
-        or os.getenv("SOURCE_LINK")
-    )
-    post_words_min = int(os.getenv("POST_WORDS_MIN", "200"))
-    post_words_max = int(os.getenv("POST_WORDS_MAX", "800"))
-    max_searches = int(os.getenv("MAX_SEARCHES", "5"))
-    recent_window_days = int(os.getenv("RECENT_WINDOW_DAYS", "2"))
-
-    allowed_env = _split_domains(os.getenv("ALLOWED_DOMAINS"))
-    allowed = allowed_env or DEFAULT_ALLOWED_DOMAINS.copy()
-    if allowed_env:
-        # ensure no duplicates while preserving declared order
-        seen = set()
-        deduped = []
-        for domain in allowed_env + DEFAULT_ALLOWED_DOMAINS:
-            if domain and domain not in seen:
-                seen.add(domain)
-                deduped.append(domain)
-        allowed = deduped
-
-    blocked = _split_domains(os.getenv("BLOCKED_DOMAINS"))
-
     return GenerationSettings(
-        topic_hint=topic_hint,
-        topic_url=topic_url,
-        post_words_min=post_words_min,
-        post_words_max=post_words_max,
-        max_searches=max_searches,
-        recent_window_days=recent_window_days,
-        allowed_domains=allowed,
-        blocked_domains=blocked,
+        topic_hint=DEFAULT_TOPIC_HINT,
+        topic_url=DEFAULT_TOPIC_URL,
+        post_words_min=DEFAULT_POST_WORDS_MIN,
+        post_words_max=DEFAULT_POST_WORDS_MAX,
+        max_searches=DEFAULT_MAX_SEARCHES,
+        recent_window_days=DEFAULT_RECENT_WINDOW_DAYS,
+        allowed_domains=DEFAULT_ALLOWED_DOMAINS.copy(),
+        blocked_domains=DEFAULT_BLOCKED_DOMAINS.copy(),
     )
 
 

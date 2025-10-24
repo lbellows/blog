@@ -37,10 +37,11 @@ Jekyll powers this GitHub Pages blog. `_config.yml` controls metadata, `_include
 ## Build, Test, and Development Commands
 - `python -m venv .venv && source .venv/bin/activate` isolates dependencies.
 - `pip install -r requirements.txt` installs the Anthropics, Foundry, and slugify helpers.
-- `python scripts/generate_post_claude.py` generates a post using Anthropic; export `ANTHROPIC_API_KEY` (plus `TOPIC_HINT`, etc.) first.
-- `python scripts/generate_post_websearch.py` generates a post using Azure Foundry; set `FOUNDARY_API_KEY`, `ENDPOINT_URL`, and optional `TOPIC_HINT` first.
+- `python scripts/generate_post_claude.py` generates a post using Anthropic; export `ANTHROPIC_API_KEY` first (content defaults live in `scripts/common/settings.py`).
+- `python scripts/generate_post_websearch.py` generates a post using Azure Foundry; set `FOUNDARY_API_KEY`/`ENDPOINT_URL` secrets first.
 - `bundle exec jekyll serve --livereload` previews the site locally after installing the `github-pages` gem.
-- Default allowed domains already bias search toward Microsoft/.NET/GitHub announcements and reputable tech press; override `ALLOWED_DOMAINS` only when you need a narrower set.
+- Default allowed domains already bias search toward Microsoft/.NET/GitHub announcements and reputable tech press; edit `DEFAULT_ALLOWED_DOMAINS` in `scripts/common/settings.py` if you need changes.
+- Scheduled workflow relies on the defaults baked into `scripts/common/settings.py`; avoid reintroducing duplicate tunables into `.github/workflows/daily-post-rag.yml`.
 
 ## Coding Style & Naming Conventions
 Follow PEP 8: four-space indentation, snake_case functions, and UPPER_SNAKE_CASE env keys. Keep helpers pure and return text, as `parse_foundry_response_dict` does. Generated front matter should mimic `tests/posts/test-post.md`, using lowercase tags and minimal quoting. CSS stays in one file—use descriptive classes such as `.post-summary` and cluster overrides by feature.
@@ -52,4 +53,4 @@ There is no automated CI, so smoke-test locally. When tweaking Foundry parsing, 
 Commit messages stay short and imperative (`clean up`, `testing multi llm via azure`), with optional scopes for post runs (`chore(posts): ...`). Keep commits focused and avoid mixing regenerated posts with script changes. Pull requests should summarize publishing impact, link related issues, attach preview screenshots for UI tweaks, and call out new env vars or secrets.
 
 ## Security & Configuration Tips
-Store `FOUNDARY_API_KEY` and `ANTHROPIC_API_KEY` as GitHub secrets; never commit `.env` artifacts. Export env vars per shell session when testing locally. Review `_config.yml` before enabling plugins to stay within the GitHub Pages allowlist.
+Store `FOUNDARY_API_KEY` and `ANTHROPIC_API_KEY` as GitHub secrets; never commit `.env` artifacts. Only secrets should come from env vars—content defaults are maintained in code. Review `_config.yml` before enabling plugins to stay within the GitHub Pages allowlist.

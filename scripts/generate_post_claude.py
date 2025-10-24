@@ -12,7 +12,7 @@ from common.prompts import PromptContext
 from common.settings import GenerationSettings
 
 
-DEFAULT_ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-haiku-4-5-20251001")
+DEFAULT_ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"
 
 
 def _build_tools(settings: GenerationSettings) -> list[dict]:

@@ -48,18 +48,9 @@ export ANTHROPIC_API_KEY="sk-..."
 python scripts/generate_post_claude.py
 ```
 
-You can also export tunables for a single run (these are the same env names used in the workflow):
+Tip: both generators automatically load a `.env` file at the repository root if it exists—only secret values (e.g., API keys) are read from the environment.
 
-```sh
-export TOPIC_HINT="Security + AI + .NET"
-export MAX_SEARCHES=8
-export ALLOWED_DOMAINS="learn.microsoft.com,arxiv.org"
-python scripts/generate_post_claude.py
-```
-
-Tip: both generators automatically load a `.env` file at the repository root if it exists, so you can keep secrets there for local runs.
-
-## Tunables (names used in the workflow and what they do)
+## Content defaults (adjust in `scripts/common/settings.py`)
 
 - `TOPIC_HINT` — short instruction describing audience/angle (example: "AI + .NET + Azure + GitHub + LLM").
 - `MAX_SEARCHES` — maximum number of web-search calls the model may perform (integer).
@@ -70,18 +61,7 @@ Tip: both generators automatically load a `.env` file at the repository root if 
 - `RECENT_WINDOW_DAYS` — how many days back the web search should look when hunting for breaking news (int, defaults to `2`).
 - `TOPIC_URL` — optional primary link to anchor the article around (aliases: `TOPIC_LINK`, `SOURCE_LINK`).
 
-These are defined in the `env:` section of `.github/workflows/daily-post-rag.yml`; edit those values to tune scheduled runs.
-
-Example snippet to change them in the workflow `env:` block:
-
-```yaml
-TOPIC_HINT: "Security + AI + .NET"
-MAX_SEARCHES: "8"
-POST_WORDS_MIN: "300"
-POST_WORDS_MAX: "1200"
-ALLOWED_DOMAINS: "learn.microsoft.com,arxiv.org,techcrunch.com"
-BLOCKED_DOMAINS: "example.com"
-```
+These are defined as constants in `scripts/common/settings.py` and are no longer read from environment variables. Edit the constants directly if you need to change the publishing defaults.
 
 ## Add the secret to GitHub Actions (alternate: CLI)
 
@@ -121,6 +101,10 @@ Manual test: Use the workflow’s Run workflow button to test once you add the s
 - Each post highlights at least one of .NET, Azure, or GitHub while keeping a light, professional sense of humor.
 - The generator prompts for a meme image (reuse `assets/images/robot.webp` for now) to keep things playful.
 - During generation a contextual meme is rendered from `assets/images/robot.webp` with captions pulled from the title and TL;DR.
+
+# TODO
+* FOUNDARY_URL doesn't appear to be used outside from loading it.  Remove it if it is safe.
+* Clean up the foundry script.  Not everything needs to be loaded from env.  Only the secrets and urls.  Other values can be constants.
 
 # Future
 
