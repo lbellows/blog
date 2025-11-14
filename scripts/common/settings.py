@@ -30,6 +30,17 @@ DEFAULT_ALLOWED_DOMAINS = [
 ]
 DEFAULT_BLOCKED_DOMAINS: list[str] = []
 DEFAULT_TOPIC_URL: Optional[str] = None
+DEFAULT_ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"
+DEFAULT_FOUNDRY_MODELS = [
+    "DeepSeek-V3.1",
+    "gpt-5-mini",
+    "gpt-oss-120b",
+]
+DEFAULT_FOUNDRY_MODEL = "gpt-oss-120b"
+DEFAULT_FOUNDRY_MAX_TOKENS = 2048
+DEFAULT_FOUNDRY_TEMPERATURE: Optional[float] = None
+DEFAULT_FOUNDRY_TOP_P: Optional[float] = None
+DEFAULT_MEME_GUIDANCE_ENABLED = True
 _DOTENV_LOADED = False
 
 
@@ -56,6 +67,13 @@ class GenerationSettings:
     allowed_domains: list[str] = field(default_factory=list)
     blocked_domains: list[str] = field(default_factory=list)
     repo_root: Path = field(default_factory=lambda: DEFAULT_REPO_ROOT)
+    anthropic_model: str = DEFAULT_ANTHROPIC_MODEL
+    foundry_models: list[str] = field(default_factory=list)
+    foundry_default_model: str = DEFAULT_FOUNDRY_MODEL
+    foundry_max_tokens: int = DEFAULT_FOUNDRY_MAX_TOKENS
+    foundry_temperature: Optional[float] = DEFAULT_FOUNDRY_TEMPERATURE
+    foundry_top_p: Optional[float] = DEFAULT_FOUNDRY_TOP_P
+    meme_guidance_enabled: bool = DEFAULT_MEME_GUIDANCE_ENABLED
 
 
 def load_generation_settings() -> GenerationSettings:
@@ -70,6 +88,7 @@ def load_generation_settings() -> GenerationSettings:
         recent_window_days=DEFAULT_RECENT_WINDOW_DAYS,
         allowed_domains=DEFAULT_ALLOWED_DOMAINS.copy(),
         blocked_domains=DEFAULT_BLOCKED_DOMAINS.copy(),
+        foundry_models=DEFAULT_FOUNDRY_MODELS.copy(),
     )
 
 

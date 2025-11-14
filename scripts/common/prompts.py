@@ -71,19 +71,29 @@ def build_prompt_context(
     user_instruction_text = "\n".join(f"{idx + 1}) {item}" for idx, item in enumerate(user_items))
     primary_line = f"Primary requested link: {settings.topic_url}\n" if settings.topic_url else ""
 
+    guidance_lines = [
+        "- A single H1 title on the first line (non-clickbait, specific).",
+        "- A short **TL;DR** section.",
+        "- Clear sections with practical takeaways (code or CLI snippets welcome).",
+        f"- {TECH_GUIDANCE}",
+        f"- {HUMOR_GUIDANCE}",
+    ]
+    if settings.meme_guidance_enabled:
+        guidance_lines.append(f"- {IMAGE_GUIDANCE}")
+    guidance_lines.extend(
+        [
+            "- Cautious language for claims; avoid speculation and hallucinations.",
+            "- A **Further reading** section listing all source links as plain URLs.",
+        ]
+    )
+    guidance_block = "\n".join(guidance_lines)
+
     system_prompt = f"""
 You are a senior technical writer for software engineers working with .NET, Azure, and AI Software.
 Use the web_search tool to gather several fresh, reputable sources about current AI developments
 that impact developers. Then write a grounded Markdown blog post with:
 
-- A single H1 title on the first line (non-clickbait, specific).
-- A short **TL;DR** section.
-- Clear sections with practical takeaways (code or CLI snippets welcome).
-- {TECH_GUIDANCE}
-- {HUMOR_GUIDANCE}
-- {IMAGE_GUIDANCE}
-- Cautious language for claims; avoid speculation and hallucinations.
-- A **Further reading** section listing all source links as plain URLs.
+{guidance_block}
 
 Length: {settings.post_words_min}-{settings.post_words_max} words. US English. Markdown only (no HTML).
 If web search fails or yields little, write a pragmatic evergreen piece for the same audience.
@@ -107,3 +117,51 @@ Instructions:
         user_instruction_items=user_items,
         primary_link_line=primary_line,
     )
+
+
+def build_chat_messages(prompt_context: PromptContext) -> list[dict]:
+    return [
+        {"role": "system", "content": [{"type": "text", "text": prompt_context.system_prompt}]},
+        {"role": "user", "content": [{"type": "text", "text": prompt_context.user_prompt}]},
+    ]
+
+
+def empty_response_retry_instruction() -> list[dict]:
+    return [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": (
+                        "The previous response was empty. Provide the complete Markdown article now with an H1 title, "
+                        "a **TL;DR** section, practical sections, and a **Further reading** list. Do not mention tool usage."
+                    ),
+                }
+            ],
+        }
+    ]
+
+
+def markup_retry_instruction(tool_markup_present: bool) -> list[dict]:
+    intro = (
+        "The previous response included raw tool-call markup."
+        if tool_markup_present
+        else "The previous response did not deliver the final Markdown article."
+    )
+    text = (
+        f"{intro} Web search is unavailable in this environment. Reply now with a complete Markdown post "
+        "that includes an H1 title, a **TL;DR** section, practical sections, and a **Further reading** list. "
+        "Do not emit tool-call markup, <|...|> tokens, or describe the attempt; output only the article."
+    )
+    return [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": text,
+                }
+            ],
+        }
+    ]

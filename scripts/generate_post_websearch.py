@@ -10,24 +10,13 @@ from common import (
     load_generation_settings,
     write_post,
 )
-from common.prompts import PromptContext
+from common.prompts import (
+    PromptContext,
+    build_chat_messages,
+    empty_response_retry_instruction,
+    markup_retry_instruction,
+)
 from common.settings import GenerationSettings
-
-
-# Default Foundry models (from your screenshot). You can override via FOUNDARY_MODELS env var (comma-separated).
-FOUNDARY_MODELS_DEFAULT = [
-    "DeepSeek-V3.1",
-    "gpt-5-mini",
-    "gpt-oss-120b",
-    # "Llama-4-Maverick-17B-128E-Instruct-FP8",
-]
-
-
-def _build_messages(prompt_context: PromptContext) -> list[dict]:
-    return [
-        {"role": "system", "content": [{"type": "text", "text": prompt_context.system_prompt}]},
-        {"role": "user", "content": [{"type": "text", "text": prompt_context.user_prompt}]},
-    ]
 
 
 def ask_azure_foundry_with_web_search(
@@ -40,39 +29,31 @@ def ask_azure_foundry_with_web_search(
 ) -> str:
     """Call Azure OpenAI (Foundry) using the REST API."""
 
-    endpoint = os.environ.get("ENDPOINT_URL") or os.environ.get("FOUNDARY_URL")
+    endpoint = os.environ.get("ENDPOINT_URL") or os.environ.get("AZURE_OPENAI_ENDPOINT")
     if not endpoint:
-        raise RuntimeError("ENDPOINT_URL or FOUNDARY_URL must be set to the Azure OpenAI service root")
+        raise RuntimeError("ENDPOINT_URL or AZURE_OPENAI_ENDPOINT must be set to the Azure OpenAI service root")
     endpoint = endpoint.rstrip("/")
 
     subscription_key = os.environ.get("FOUNDARY_API_KEY") or os.environ.get("AZURE_OPENAI_API_KEY")
-    deployment = foundry_model or os.environ.get("FOUNDARY_MODEL") or os.environ.get("DEPLOYMENT_NAME") or "gpt-oss-120b"
+    deployment = foundry_model or settings.foundry_default_model
 
     if not subscription_key:
         raise RuntimeError("FOUNDARY_API_KEY or AZURE_OPENAI_API_KEY not set for REST Foundry client")
 
     url = f"{endpoint}/openai/deployments/{deployment}/chat/completions?api-version=2025-01-01-preview"
 
-    messages = _build_messages(prompt_context)
+    messages = build_chat_messages(prompt_context)
     if _extra_messages:
         messages.extend(_extra_messages)
 
     payload = {
         "messages": messages,
-        "max_tokens": 2048,
+        "max_tokens": settings.foundry_max_tokens,
     }
-    temp = os.getenv("FOUNDARY_TEMPERATURE")
-    top_p = os.getenv("FOUNDARY_TOP_P")
-    try:
-        if temp is not None:
-            payload["temperature"] = float(temp)
-    except ValueError:
-        pass
-    try:
-        if top_p is not None:
-            payload["top_p"] = float(top_p)
-    except ValueError:
-        pass
+    if settings.foundry_temperature is not None:
+        payload["temperature"] = settings.foundry_temperature
+    if settings.foundry_top_p is not None:
+        payload["top_p"] = settings.foundry_top_p
 
     headers = {
         "Content-Type": "application/json",
@@ -166,27 +147,12 @@ def ask_azure_foundry_with_web_search(
 
     markdown = "\n".join(t.strip() for t in texts if t).strip()
     if not markdown and not _extra_messages:
-        fallback_instruction = [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": (
-                            "The previous response was empty. Provide the complete Markdown article now with an H1 title, "
-                            "a **TL;DR** section, practical sections, and a **Further reading** list. "
-                            "Do not mention tool usage."
-                        ),
-                    }
-                ],
-            }
-        ]
         return ask_azure_foundry_with_web_search(
             settings,
             prompt_context,
             foundry_model=foundry_model,
             post_fn=post_fn,
-            _extra_messages=fallback_instruction,
+            _extra_messages=empty_response_retry_instruction(),
         )
     elif not markdown:
         return markdown
@@ -198,28 +164,12 @@ def ask_azure_foundry_with_web_search(
     tool_markup = "<|" in markdown or "web_search" in lower
 
     if not _extra_messages and (not (has_heading and has_tldr and has_further) or tool_markup):
-        fallback_instruction = [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": (
-                            ("The previous response included raw tool-call markup." if tool_markup else "The previous response did not deliver the final Markdown article.")
-                            + " Web search is unavailable in this environment. Reply now with a complete Markdown post "
-                            "that includes an H1 title, a **TL;DR** section, practical sections, and a **Further reading** list. "
-                            "Do not emit tool-call markup, <|...|> tokens, or describe the attempt; output only the article."
-                        ),
-                    }
-                ],
-            }
-        ]
         return ask_azure_foundry_with_web_search(
             settings,
             prompt_context,
             foundry_model=foundry_model,
             post_fn=post_fn,
-            _extra_messages=fallback_instruction,
+            _extra_messages=markup_retry_instruction(tool_markup),
         )
 
     return markdown
@@ -229,8 +179,7 @@ def ask_with_web_search(settings: GenerationSettings, prompt_context: PromptCont
     if not os.environ.get("FOUNDARY_API_KEY") and not os.environ.get("AZURE_OPENAI_API_KEY"):
         raise RuntimeError("FOUNDARY_API_KEY or AZURE_OPENAI_API_KEY must be set; cannot call Azure Foundry")
 
-    env_models = [m.strip() for m in os.environ.get("FOUNDARY_MODELS", "").split(",") if m.strip()]
-    models = env_models or FOUNDARY_MODELS_DEFAULT
+    models = list(settings.foundry_models) or [settings.foundry_default_model]
     random.shuffle(models)
 
     last_err: Exception | None = None

@@ -12,9 +12,6 @@ from common.prompts import PromptContext
 from common.settings import GenerationSettings
 
 
-DEFAULT_ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"
-
-
 def _build_tools(settings: GenerationSettings) -> list[dict]:
     tool_def = {
         "type": "web_search_20250305",
@@ -40,7 +37,7 @@ def ask_claude_with_web_search(
         raise RuntimeError("ANTHROPIC_API_KEY must be set for Anthropic client")
 
     anthropic_client = client or anthropic.Anthropic(api_key=api_key)
-    chosen_model = model or DEFAULT_ANTHROPIC_MODEL
+    chosen_model = model or settings.anthropic_model
 
     response = anthropic_client.messages.create(
         model=chosen_model,

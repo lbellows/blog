@@ -36,6 +36,8 @@ cd blog
 - Scheduled workflow: `.github/workflows/daily-post-rag.yml`
 - Shared helpers for prompts, cadence, and memes: `scripts/common/`
 
+Azure Foundry runs now only read `ENDPOINT_URL` (or `AZURE_OPENAI_ENDPOINT`) plus `FOUNDARY_API_KEY`/`AZURE_OPENAI_API_KEY` from your environment. All other knobs live in `scripts/common/settings.py`.
+
 ## Run the generator locally (for testing)
 
 Install the same dependencies the workflow uses and run the script with your Anthropic key exported:
@@ -60,6 +62,10 @@ Tip: both generators automatically load a `.env` file at the repository root if 
 - `POST_WORDS_MAX` — maximum desired words in the generated post (int).
 - `RECENT_WINDOW_DAYS` — how many days back the web search should look when hunting for breaking news (int, defaults to `2`).
 - `TOPIC_URL` — optional primary link to anchor the article around (aliases: `TOPIC_LINK`, `SOURCE_LINK`).
+- `ANTHROPIC_MODEL` — default Claude deployment slug used by `scripts/generate_post_claude.py`.
+- `FOUNDRY_MODELS` — ordered list of Azure Foundry deployments the REST client will try.
+- `FOUNDRY_DEFAULT_MODEL`/`FOUNDRY_MAX_TOKENS`/`FOUNDRY_TEMPERATURE`/`FOUNDRY_TOP_P` — chat parameters applied to Azure Foundry calls.
+- `MEME_GUIDANCE_ENABLED` — toggles whether prompts instruct the model to embed a meme image.
 - Generated posts automatically add a `llm_model:<model>` tag (default `claude`) so you can filter by source model.
 
 These are defined as constants in `scripts/common/settings.py` and are no longer read from environment variables. Edit the constants directly if you need to change the publishing defaults.
@@ -104,13 +110,6 @@ Manual test: Use the workflow’s Run workflow button to test once you add the s
 - Each post highlights at least one of .NET, Azure, or GitHub while keeping a light, professional sense of humor.
 - The generator prompts for a meme image (reuse `assets/images/robot.webp` for now) to keep things playful.
 - During generation a contextual meme is rendered from `assets/images/robot.webp` with captions pulled from the title and TL;DR.
-
-# TODO
-* FOUNDARY_URL doesn't appear to be used outside from loading it.  Remove it if it is safe.
-* Clean up the foundry script.  Not everything needs to be loaded from env.  Only the secrets and urls.  Other values can be constants.
-* Combine all settings into the settings.py.  Also move default parameters so that all settings and tweaks can be controlled from one file.
-* Move all prompts and prompt logic to prompts.py.
-* Make sure IMAGE_GUIDANCE is controlled by a meme setting like some of the other meme/image logic is.
 
 # Future
 
