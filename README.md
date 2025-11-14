@@ -108,6 +108,9 @@ Manual test: Use the workflow’s Run workflow button to test once you add the s
 # TODO
 * FOUNDARY_URL doesn't appear to be used outside from loading it.  Remove it if it is safe.
 * Clean up the foundry script.  Not everything needs to be loaded from env.  Only the secrets and urls.  Other values can be constants.
+* Combine all settings into the settings.py.  Also move default parameters so that all settings and tweaks can be controlled from one file.
+* Move all prompts and prompt logic to prompts.py.
+* Make sure IMAGE_GUIDANCE is controlled by a meme setting like some of the other meme/image logic is.
 
 # Future
 

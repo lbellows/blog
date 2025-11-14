@@ -40,7 +40,7 @@ Jekyll powers this GitHub Pages blog. `_config.yml` controls metadata, `_include
 - `python scripts/generate_post_claude.py` generates a post using Anthropic; export `ANTHROPIC_API_KEY` first (content defaults live in `scripts/common/settings.py`).
 - `python scripts/generate_post_websearch.py` generates a post using Azure Foundry; set `FOUNDARY_API_KEY`/`ENDPOINT_URL` secrets first.
 - `bundle exec jekyll serve --livereload` previews the site locally after installing the `github-pages` gem.
-- Default allowed domains already bias search toward Microsoft/.NET/GitHub announcements and reputable tech press; edit `DEFAULT_ALLOWED_DOMAINS` in `scripts/common/settings.py` if you need changes.
+- Default allowed domains already bias search toward Microsoft/.NET announcements and reputable tech press; edit `DEFAULT_ALLOWED_DOMAINS` in `scripts/common/settings.py` if you need changes.
 - Posts must retain the model-name tag (e.g., `claude`) that the generator derives from content; if you hand-edit `_posts/`, re-run the retag helper.
 - Scheduled workflow relies on the defaults baked into `scripts/common/settings.py`; avoid reintroducing duplicate tunables into `.github/workflows/daily-post-rag.yml`.
 

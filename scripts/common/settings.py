@@ -11,7 +11,7 @@ except ImportError:  # pragma: no cover - dotenv optional at import time
     load_dotenv = None  # type: ignore
 
 DEFAULT_REPO_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_TOPIC_HINT = "Artificial Intelligence news for software engineers shipping on .NET, Azure, and GitHub."
+DEFAULT_TOPIC_HINT = "Artificial Intelligence news for software engineers shipping on .NET and Azure."
 DEFAULT_POST_WORDS_MIN = 200
 DEFAULT_POST_WORDS_MAX = 800
 DEFAULT_MAX_SEARCHES = 5

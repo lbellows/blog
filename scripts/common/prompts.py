@@ -8,7 +8,7 @@ from .settings import GenerationSettings, today_date
 
 
 TECH_GUIDANCE = (
-    "Highlight at least one of these ecosystems where relevant: .NET, Azure, or GitHub. "
+    "Highlight at least one of these ecosystems where relevant: .NET, Azure, or any AI related software. "
     "Choose whichever best fits the story; covering all three is optional."
 )
 HUMOR_GUIDANCE = (
@@ -72,7 +72,7 @@ def build_prompt_context(
     primary_line = f"Primary requested link: {settings.topic_url}\n" if settings.topic_url else ""
 
     system_prompt = f"""
-You are a senior technical writer for software engineers working with .NET, Azure, and GitHub.
+You are a senior technical writer for software engineers working with .NET, Azure, and AI Software.
 Use the web_search tool to gather several fresh, reputable sources about current AI developments
 that impact developers. Then write a grounded Markdown blog post with:
 
