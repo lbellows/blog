@@ -28,9 +28,8 @@ def extract_title(markdown_body: str) -> str:
     return "Daily AI Update"
 
 
-def _posts_dir(settings: GenerationSettings, override_dir: Path | None) -> Path:
-    if override_dir:
-        return override_dir
+def _posts_dir(settings: GenerationSettings) -> Path:
+
     path = settings.repo_root / "_posts"
     path.mkdir(parents=True, exist_ok=True)
     return path
@@ -80,7 +79,7 @@ def _normalize_tag(token: str) -> str:
     return token
 
 
-def _infer_tags(markdown_body: str, model: str | None, extra_tags: Sequence[str] | None = None) -> list[str]:
+def _infer_tags(markdown_body: str, model: str | None) -> list[str]:
     candidates: Dict[str, int] = {}
     sections = []
     for line in markdown_body.splitlines():
@@ -106,11 +105,6 @@ def _infer_tags(markdown_body: str, model: str | None, extra_tags: Sequence[str]
     model_tag = (model or "claude").strip().lower()
     if model_tag and model_tag not in tags:
         tags.append(model_tag)
-    if extra_tags:
-        for item in extra_tags:
-            norm = _normalize_tag(item)
-            if norm and norm not in tags:
-                tags.append(norm)
     if not tags:
         tags = ["ai", model_tag or "claude"]
     if len(tags) > 6:
@@ -126,19 +120,12 @@ def write_post(
     markdown_body: str,
     settings: GenerationSettings,
     *,
-    used_model: str | None = None,
-    author: str = "the.serf",
-    tags: Sequence[str] | None = None,
-    output_dir: Path | None = None,
-    today: datetime.date | None = None,
-    enable_meme: bool = False,
-    include_llm_model: bool = False,
-    extra_front_matter: Optional[Dict[str, str]] = None,
+    used_model: str | None = None
 ) -> Tuple[Path, Optional[str]]:
     markdown_body = _strip_leading_instructions(markdown_body)
 
-    current_day = today or today_date()
-    posts_dir = _posts_dir(settings, output_dir)
+    current_day = today_date()
+    posts_dir = _posts_dir(settings)
     posts_dir.mkdir(parents=True, exist_ok=True)
 
     title = extract_title(markdown_body)
@@ -148,8 +135,10 @@ def write_post(
         slug += "-2"
 
     summary = extract_tldr_line(markdown_body)
+    effective_author = settings.default_author
+    meme_flag = settings.meme_guidance_enabled
     meme_rel_path: Optional[str] = None
-    if enable_meme:
+    if meme_flag:
         meme_rel_path = generate_contextual_meme(markdown_body, title, slug, settings)
         if meme_rel_path:
             markdown_body = inject_meme_into_markdown(markdown_body, meme_rel_path, title, summary)
@@ -160,18 +149,15 @@ def write_post(
     publish_dt = now_ny - datetime.timedelta(minutes=1)
 
     model_tag = (used_model or "claude").strip()
-    merged_tags = _infer_tags(markdown_body, model_tag, extra_tags=tags or ())
+    merged_tags = _infer_tags(markdown_body, model_tag)
 
     front_matter = {
         "layout": "post",
         "title": title,
         "date": publish_dt.strftime("%Y-%m-%d %H:%M:%S %z"),
         "tags": merged_tags,
-        "author": author,
+        "author": effective_author,
     }
-    # `llm_model` is now conveyed via tags; retain parameter for compatibility but ignore.
-    if extra_front_matter:
-        front_matter.update(extra_front_matter)
 
     post = frontmatter.Post(markdown_body, **front_matter)
     text = frontmatter.dumps(post)

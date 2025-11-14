@@ -62,7 +62,9 @@ Tip: both generators automatically load a `.env` file at the repository root if 
 - `POST_WORDS_MAX` — maximum desired words in the generated post (int).
 - `RECENT_WINDOW_DAYS` — how many days back the web search should look when hunting for breaking news (int, defaults to `2`).
 - `TOPIC_URL` — optional primary link to anchor the article around (aliases: `TOPIC_LINK`, `SOURCE_LINK`).
+- `POST_AUTHOR` — default author name injected into front matter.
 - `ANTHROPIC_MODEL` — default Claude deployment slug used by `scripts/generate_post_claude.py`.
+- `ANTHROPIC_MAX_TOKENS` / `ANTHROPIC_TEMPERATURE` — controls Claude response length and creativity.
 - `FOUNDRY_MODELS` — ordered list of Azure Foundry deployments the REST client will try.
 - `FOUNDRY_DEFAULT_MODEL`/`FOUNDRY_MAX_TOKENS`/`FOUNDRY_TEMPERATURE`/`FOUNDRY_TOP_P` — chat parameters applied to Azure Foundry calls.
 - `MEME_GUIDANCE_ENABLED` — toggles whether prompts instruct the model to embed a meme image.
@@ -108,7 +110,7 @@ Manual test: Use the workflow’s Run workflow button to test once you add the s
 - Weekday posts now dive deep on one breaking story from the most recent `RECENT_WINDOW_DAYS` window.
 - Sunday runs switch to a weekly synopsis that blends news and forward-looking tips (e.g., 2025 planning).
 - Each post highlights at least one of .NET, Azure, or GitHub while keeping a light, professional sense of humor.
-- The generator prompts for a meme image (reuse `assets/images/robot.webp` for now) to keep things playful.
+- The generator prompts for a meme image (reuse `assets/images/robot.webp` for now) to keep things playful, and the same setting drives whether we render a contextual meme into each post.
 - During generation a contextual meme is rendered from `assets/images/robot.webp` with captions pulled from the title and TL;DR.
 
 # Future

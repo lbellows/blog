@@ -39,14 +39,17 @@ def ask_claude_with_web_search(
     anthropic_client = client or anthropic.Anthropic(api_key=api_key)
     chosen_model = model or settings.anthropic_model
 
-    response = anthropic_client.messages.create(
-        model=chosen_model,
-        max_tokens=2200,
-        temperature=0.6,
-        system=prompt_context.system_prompt,
-        messages=[{"role": "user", "content": prompt_context.user_prompt}],
-        tools=_build_tools(settings),
-    )
+    request_kwargs = {
+        "model": chosen_model,
+        "max_tokens": settings.anthropic_max_tokens,
+        "system": prompt_context.system_prompt,
+        "messages": [{"role": "user", "content": prompt_context.user_prompt}],
+        "tools": _build_tools(settings),
+    }
+    if settings.anthropic_temperature is not None:
+        request_kwargs["temperature"] = settings.anthropic_temperature
+
+    response = anthropic_client.messages.create(**request_kwargs)
 
     parts: list[str] = []
     for block in response.content:
@@ -67,8 +70,7 @@ def main():
     write_post(
         body,
         settings,
-        used_model=model,
-        include_llm_model=True,
+        used_model=model
     )
 
 

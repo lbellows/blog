@@ -207,8 +207,7 @@ def main():
     write_post(
         body,
         settings,
-        used_model=used_model,
-        include_llm_model=True,
+        used_model=used_model
     )
 
 

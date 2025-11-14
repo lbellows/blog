@@ -30,7 +30,10 @@ DEFAULT_ALLOWED_DOMAINS = [
 ]
 DEFAULT_BLOCKED_DOMAINS: list[str] = []
 DEFAULT_TOPIC_URL: Optional[str] = None
+DEFAULT_POST_AUTHOR = "the.serf"
 DEFAULT_ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"
+DEFAULT_ANTHROPIC_MAX_TOKENS = 2200
+DEFAULT_ANTHROPIC_TEMPERATURE: Optional[float] = 0.6
 DEFAULT_FOUNDRY_MODELS = [
     "DeepSeek-V3.1",
     "gpt-5-mini",
@@ -40,7 +43,7 @@ DEFAULT_FOUNDRY_MODEL = "gpt-oss-120b"
 DEFAULT_FOUNDRY_MAX_TOKENS = 2048
 DEFAULT_FOUNDRY_TEMPERATURE: Optional[float] = None
 DEFAULT_FOUNDRY_TOP_P: Optional[float] = None
-DEFAULT_MEME_GUIDANCE_ENABLED = True
+DEFAULT_MEME_GUIDANCE_ENABLED = False
 _DOTENV_LOADED = False
 
 
@@ -67,7 +70,10 @@ class GenerationSettings:
     allowed_domains: list[str] = field(default_factory=list)
     blocked_domains: list[str] = field(default_factory=list)
     repo_root: Path = field(default_factory=lambda: DEFAULT_REPO_ROOT)
+    default_author: str = DEFAULT_POST_AUTHOR
     anthropic_model: str = DEFAULT_ANTHROPIC_MODEL
+    anthropic_max_tokens: int = DEFAULT_ANTHROPIC_MAX_TOKENS
+    anthropic_temperature: Optional[float] = DEFAULT_ANTHROPIC_TEMPERATURE
     foundry_models: list[str] = field(default_factory=list)
     foundry_default_model: str = DEFAULT_FOUNDRY_MODEL
     foundry_max_tokens: int = DEFAULT_FOUNDRY_MAX_TOKENS

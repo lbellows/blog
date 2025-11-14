@@ -4,6 +4,8 @@
 - Consolidated Claude/Foundry defaults (models, token/temperature caps, meme guidance toggle) inside `scripts/common/settings.py` so only secrets and endpoints rely on environment variables.
 - Cleaned up the Azure Foundry generator to drop the unused `FOUNDARY_URL` fallback, use the shared settings object, and relocate retry prompts into `scripts/common/prompts.py`.
 - Updated `README.md` to describe the new configuration knobs and cleared the completed TODO list.
+- Tied `write_post` defaults (author attribution, meme generation) directly to `GenerationSettings`, so the generators no longer pass those knobs around and meme rendering follows the same setting that controls prompt guidance.
+- Added Claude `max_tokens`/`temperature` and `POST_AUTHOR` defaults to `GenerationSettings` plus documentation tweaks covering the new toggles.
 
 ## 2025-10-23
 - Refined `generate_post_websearch.py` to enforce a 2-day breaking-news window, weekday vs. Sunday cadence, humor, and meme prompts.
