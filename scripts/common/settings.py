@@ -13,8 +13,8 @@ except ImportError:  # pragma: no cover - dotenv optional at import time
 DEFAULT_REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_TOPIC_HINT = "Artificial Intelligence news for software engineers shipping on .NET and Azure."
 DEFAULT_POST_WORDS_MIN = 200
-DEFAULT_POST_WORDS_MAX = 800
-DEFAULT_MAX_SEARCHES = 5
+DEFAULT_POST_WORDS_MAX = 1000
+DEFAULT_MAX_SEARCHES = 7
 DEFAULT_RECENT_WINDOW_DAYS = 2
 DEFAULT_ALLOWED_DOMAINS = [
     "learn.microsoft.com",
@@ -32,15 +32,15 @@ DEFAULT_BLOCKED_DOMAINS: list[str] = []
 DEFAULT_TOPIC_URL: Optional[str] = None
 DEFAULT_POST_AUTHOR = "the.serf"
 DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-4-6"
-DEFAULT_ANTHROPIC_MAX_TOKENS = 2200
-DEFAULT_ANTHROPIC_TEMPERATURE: Optional[float] = 0.6
+DEFAULT_ANTHROPIC_MAX_TOKENS = 4096
+DEFAULT_ANTHROPIC_TEMPERATURE: Optional[float] = 0.9
 DEFAULT_FOUNDRY_MODELS = [
     "DeepSeek-V3.1",
     "gpt-5-mini",
     "gpt-oss-120b",
 ]
 DEFAULT_FOUNDRY_MODEL = "gpt-oss-120b"
-DEFAULT_FOUNDRY_MAX_TOKENS = 2048
+DEFAULT_FOUNDRY_MAX_TOKENS = 4096
 DEFAULT_FOUNDRY_TEMPERATURE: Optional[float] = None
 DEFAULT_FOUNDRY_TOP_P: Optional[float] = None
 DEFAULT_MEME_GUIDANCE_ENABLED = False
