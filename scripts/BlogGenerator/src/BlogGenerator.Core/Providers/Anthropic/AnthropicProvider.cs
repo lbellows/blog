@@ -51,9 +51,16 @@ public sealed class AnthropicProvider : IAIProvider
         httpRequest.Content = JsonContent.Create(request, options: JsonOpts);
 
         var response = await _httpClient.SendAsync(httpRequest, ct);
-        response.EnsureSuccessStatusCode();
+        var responseBody = await response.Content.ReadAsStringAsync(ct);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException(
+                $"Anthropic request failed with {(int)response.StatusCode} ({response.ReasonPhrase}). Response body: {responseBody}",
+                null,
+                response.StatusCode);
+        }
 
-        var json = await response.Content.ReadFromJsonAsync<JsonElement>(ct);
+        var json = JsonSerializer.Deserialize<JsonElement>(responseBody, JsonOpts);
 
         var parts = new List<string>();
         if (json.TryGetProperty("content", out var contentArray))
