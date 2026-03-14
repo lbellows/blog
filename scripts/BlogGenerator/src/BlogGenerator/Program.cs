@@ -31,6 +31,7 @@ var providerName = args.Length > 0 ? args[0] : Environment.GetEnvironmentVariabl
 
 var settings = new GenerationSettings();
 builder.Configuration.GetSection("Generation").Bind(settings);
+settings.Normalize();
 settings.RepoRoot = repoRoot;
 
 IAIProvider provider = providerName.ToLowerInvariant() switch

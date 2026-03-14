@@ -29,7 +29,7 @@ public sealed class GenerationSettings
     public string DefaultAuthor { get; set; } = "the.serf";
 
     // Anthropic
-    public string AnthropicModel { get; set; } = "claude-sonnet-4-6";
+    public string AnthropicModel { get; set; } = "claude-sonnet-4-0";
     public int AnthropicMaxTokens { get; set; } = 4096;
     public double? AnthropicTemperature { get; set; } = 0.9;
 
@@ -41,4 +41,25 @@ public sealed class GenerationSettings
     public double? FoundryTopP { get; set; }
 
     public bool MemeGuidanceEnabled { get; set; }
+
+    public void Normalize()
+    {
+        AllowedDomains = NormalizeDomains(AllowedDomains);
+        BlockedDomains = NormalizeDomains(BlockedDomains);
+        FoundryModels = NormalizeValues(FoundryModels, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static List<string> NormalizeDomains(IEnumerable<string> domains) =>
+        domains
+            .Where(domain => !string.IsNullOrWhiteSpace(domain))
+            .Select(domain => domain.Trim().ToLowerInvariant())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+    private static List<string> NormalizeValues(IEnumerable<string> values, StringComparer comparer) =>
+        values
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .Select(value => value.Trim())
+            .Distinct(comparer)
+            .ToList();
 }

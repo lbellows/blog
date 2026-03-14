@@ -87,6 +87,17 @@ public sealed class AnthropicProvider : IAIProvider
 
     private static List<object> BuildTools(GenerationSettings settings)
     {
+        var allowedDomains = settings.AllowedDomains
+            .Where(domain => !string.IsNullOrWhiteSpace(domain))
+            .Select(domain => domain.Trim().ToLowerInvariant())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        var blockedDomains = settings.BlockedDomains
+            .Where(domain => !string.IsNullOrWhiteSpace(domain))
+            .Select(domain => domain.Trim().ToLowerInvariant())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
         var toolDef = new Dictionary<string, object>
         {
             ["type"] = "web_search_20250305",
@@ -94,10 +105,10 @@ public sealed class AnthropicProvider : IAIProvider
             ["max_uses"] = settings.MaxSearches,
         };
 
-        if (settings.AllowedDomains.Count > 0)
-            toolDef["allowed_domains"] = settings.AllowedDomains;
-        if (settings.BlockedDomains.Count > 0)
-            toolDef["blocked_domains"] = settings.BlockedDomains;
+        if (allowedDomains.Count > 0)
+            toolDef["allowed_domains"] = allowedDomains;
+        if (blockedDomains.Count > 0)
+            toolDef["blocked_domains"] = blockedDomains;
 
         return [toolDef];
     }

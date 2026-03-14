@@ -1,5 +1,8 @@
 # Changelog
 
+## 2026-03-13
+- Fixed the C# Anthropic generator defaults to use the supported `claude-sonnet-4-0` model alias, surface Anthropic error bodies when a request is rejected, and dedupe bound domain/model lists before building provider requests.
+
 ## 2025-11-14
 - Consolidated Claude/Foundry defaults (models, token/temperature caps, meme guidance toggle) inside `scripts/common/settings.py` so only secrets and endpoints rely on environment variables.
 - Cleaned up the Azure Foundry generator to drop the unused `FOUNDARY_URL` fallback, use the shared settings object, and relocate retry prompts into `scripts/common/prompts.py`.
