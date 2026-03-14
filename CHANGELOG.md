@@ -1,7 +1,7 @@
 # Changelog
 
 ## 2026-03-13
-- Fixed the C# Anthropic generator defaults to use the supported `claude-sonnet-4-0` model alias, surface Anthropic error bodies when a request is rejected, and dedupe bound domain/model lists before building provider requests.
+- Restored the C# Anthropic generator default to `claude-sonnet-4-6`, surfaced Anthropic error bodies when a request is rejected, and deduped bound domain/model lists before building provider requests.
 
 ## 2025-11-14
 - Consolidated Claude/Foundry defaults (models, token/temperature caps, meme guidance toggle) inside `scripts/common/settings.py` so only secrets and endpoints rely on environment variables.

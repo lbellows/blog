@@ -29,7 +29,7 @@ public sealed class GenerationSettings
     public string DefaultAuthor { get; set; } = "the.serf";
 
     // Anthropic
-    public string AnthropicModel { get; set; } = "claude-sonnet-4-0";
+    public string AnthropicModel { get; set; } = "claude-sonnet-4-6";
     public int AnthropicMaxTokens { get; set; } = 4096;
     public double? AnthropicTemperature { get; set; } = 0.9;
 
