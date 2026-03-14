@@ -13,8 +13,8 @@ link: https://lbellows.github.io/blog/
 I needed an easy solution for this because I was holding my daughter, so not too much typing could be involed:
 
 * git workflows
-* executes python
-* calls claude API with search tool enabled
+* executes C# (.NET 10) generator
+* calls claude API with search tool enabled (or Azure Foundry as alternate provider)
 * writes the blog post in MD & commits
 * triggers jekyll build which updates the blog
 
@@ -31,46 +31,56 @@ cd blog
 
 ## Where the workflow and generator live
 
-- Anthropic generator: `scripts/generate_post_claude.py`
-- Azure Foundry generator: `scripts/generate_post_websearch.py`
+- C# solution: `scripts/BlogGenerator/BlogGenerator.sln`
+- Console app: `scripts/BlogGenerator/src/BlogGenerator/Program.cs`
+- Core logic: `scripts/BlogGenerator/src/BlogGenerator.Core/`
 - Scheduled workflow: `.github/workflows/daily-post-rag.yml`
-- Shared helpers for prompts, cadence, and memes: `scripts/common/`
+- Configuration: `scripts/BlogGenerator/src/BlogGenerator/appsettings.json`
 
-Azure Foundry runs now only read `ENDPOINT_URL` (or `AZURE_OPENAI_ENDPOINT`) plus `FOUNDARY_API_KEY`/`AZURE_OPENAI_API_KEY` from your environment. All other knobs live in `scripts/common/settings.py`.
+Provider selection at runtime via CLI arg (`anthropic` or `foundry`) or `AI_PROVIDER` env var.
 
 ## Run the generator locally (for testing)
 
-Install the same dependencies the workflow uses and run the script with your Anthropic key exported:
+Requires .NET 10 SDK. Run with your Anthropic key exported:
 
 ```sh
-python -m pip install --upgrade pip
-pip install anthropic python-frontmatter python-slugify pyyaml Pillow
-
 export ANTHROPIC_API_KEY="sk-..."
-python scripts/generate_post_claude.py
+dotnet run --project scripts/BlogGenerator/src/BlogGenerator -- anthropic
 ```
 
-Tip: both generators automatically load a `.env` file at the repository root if it exists—only secret values (e.g., API keys) are read from the environment.
+For Azure Foundry:
 
-## Content defaults (adjust in `scripts/common/settings.py`)
+```sh
+export FOUNDARY_API_KEY="..."
+export ENDPOINT_URL="https://..."
+dotnet run --project scripts/BlogGenerator/src/BlogGenerator -- foundry
+```
 
-- `TOPIC_HINT` — short instruction describing audience/angle (example: "AI + .NET + Azure + GitHub + LLM").
-- `MAX_SEARCHES` — maximum number of web-search calls the model may perform (integer).
-- `ALLOWED_DOMAINS` — comma-separated domains to bias results toward (optional). Defaults include Microsoft/GitHub properties plus tech press (`learn.microsoft.com`, `azure.microsoft.com`, `techcommunity.microsoft.com`, `blogs.microsoft.com`, `devblogs.microsoft.com`, `developer.microsoft.com`, `github.blog`, `techcrunch.com`, `venturebeat.com`, `infoq.com`).
-- `BLOCKED_DOMAINS` — comma-separated domains to avoid (optional).
-- `POST_WORDS_MIN` — minimum desired words in the generated post (int).
-- `POST_WORDS_MAX` — maximum desired words in the generated post (int).
-- `RECENT_WINDOW_DAYS` — how many days back the web search should look when hunting for breaking news (int, defaults to `2`).
-- `TOPIC_URL` — optional primary link to anchor the article around (aliases: `TOPIC_LINK`, `SOURCE_LINK`).
-- `POST_AUTHOR` — default author name injected into front matter.
-- `ANTHROPIC_MODEL` — default Claude deployment slug used by `scripts/generate_post_claude.py`.
-- `ANTHROPIC_MAX_TOKENS` / `ANTHROPIC_TEMPERATURE` — controls Claude response length and creativity.
-- `FOUNDRY_MODELS` — ordered list of Azure Foundry deployments the REST client will try.
-- `FOUNDRY_DEFAULT_MODEL`/`FOUNDRY_MAX_TOKENS`/`FOUNDRY_TEMPERATURE`/`FOUNDRY_TOP_P` — chat parameters applied to Azure Foundry calls.
-- `MEME_GUIDANCE_ENABLED` — toggles whether prompts instruct the model to embed a meme image.
-- Generated posts automatically add a `llm_model:<model>` tag (default `claude`) so you can filter by source model.
+## Run the tests
 
-These are defined as constants in `scripts/common/settings.py` and are no longer read from environment variables. Edit the constants directly if you need to change the publishing defaults.
+```sh
+dotnet test scripts/BlogGenerator/BlogGenerator.sln
+```
+
+## Content defaults (adjust in `appsettings.json`)
+
+- `TopicHint` — short instruction describing audience/angle (example: "AI + .NET + Azure + GitHub + LLM").
+- `MaxSearches` — maximum number of web-search calls the model may perform (integer).
+- `AllowedDomains` — domains to bias results toward (optional). Defaults include Microsoft/GitHub properties plus tech press (`learn.microsoft.com`, `azure.microsoft.com`, `techcommunity.microsoft.com`, `blogs.microsoft.com`, `devblogs.microsoft.com`, `developer.microsoft.com`, `github.blog`, `techcrunch.com`, `venturebeat.com`, `infoq.com`).
+- `BlockedDomains` — domains to avoid (optional).
+- `PostWordsMin` — minimum desired words in the generated post.
+- `PostWordsMax` — maximum desired words in the generated post.
+- `RecentWindowDays` — how many days back the web search should look when hunting for breaking news (defaults to `2`).
+- `TopicUrl` — optional primary link to anchor the article around.
+- `DefaultAuthor` — default author name injected into front matter.
+- `AnthropicModel` — default Claude deployment slug.
+- `AnthropicMaxTokens` / `AnthropicTemperature` — controls Claude response length and creativity.
+- `FoundryModels` — ordered list of Azure Foundry deployments the REST client will try.
+- `FoundryDefaultModel`/`FoundryMaxTokens`/`FoundryTemperature`/`FoundryTopP` — chat parameters applied to Azure Foundry calls.
+- `MemeGuidanceEnabled` — toggles whether prompts instruct the model to embed a meme image.
+- Generated posts automatically add a model tag (e.g., `claude-sonnet-4-6`) so you can filter by source model.
+
+These are defined in `scripts/BlogGenerator/src/BlogGenerator/appsettings.json`. Secrets (`ANTHROPIC_API_KEY`, `FOUNDARY_API_KEY`, `ENDPOINT_URL`) are read from environment variables only.
 
 Tags are derived automatically from section headings/TL;DR content plus the model name (e.g., `claude`). No manual tag list is required.
 
@@ -93,21 +103,21 @@ ANTHROPIC_API_KEY — from your Anthropic account.
 
 ## Notes & tips
 
-Models with web search: Claude 3.7 Sonnet and newer (plus several others) support this tool; see the docs for the supported list. 
+Models with web search: Claude 3.7 Sonnet and newer (plus several others) support this tool; see the docs for the supported list.
 
-Pricing: Web search calls are billed in addition to tokens ($10 / 1,000 searches). Keep MAX_SEARCHES low (e.g., 3–6) to control cost. 
+Pricing: Web search calls are billed in addition to tokens ($10 / 1,000 searches). Keep MaxSearches low (e.g., 3–6) to control cost.
 
-Citations: Claude will include citations automatically in its response when using web search. Your post will then carry those links in the “Further reading” section the prompt asks for. 
+Citations: Claude will include citations automatically in its response when using web search. Your post will then carry those links in the "Further reading" section the prompt asks for.
 
-Domain control: Set ALLOWED_DOMAINS to bias sources you trust (e.g., arxiv.org,blogs.microsoft.com,developer.nvidia.com). BLOCKED_DOMAINS can filter out low-quality sites. 
+Domain control: Set AllowedDomains to bias sources you trust (e.g., arxiv.org, blogs.microsoft.com). BlockedDomains can filter out low-quality sites.
 
 Schedule & publish time: Adjust cron and the front-matter timestamp to your preference.
 
-Manual test: Use the workflow’s Run workflow button to test once you add the secret.
+Manual test: Use the workflow's Run workflow button to test once you add the secret. You can select `anthropic` or `foundry` as the provider.
 
 # Content cadence & tone
 
-- Weekday posts now dive deep on one breaking story from the most recent `RECENT_WINDOW_DAYS` window.
+- Weekday posts now dive deep on one breaking story from the most recent `RecentWindowDays` window.
 - Sunday runs switch to a weekly synopsis that blends news and forward-looking tips (e.g., 2025 planning).
 - Each post highlights at least one of .NET, Azure, or GitHub while keeping a light, professional sense of humor.
 - The generator prompts for a meme image (reuse `assets/images/robot.webp` for now) to keep things playful, and the same setting drives whether we render a contextual meme into each post.

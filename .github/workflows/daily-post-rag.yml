@@ -3,7 +3,16 @@ name: Daily AI Blog Post
 on:
   schedule:
     - cron: "15 11 * * *"   # 11:15 UTC daily (~07:15 ET)
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      ai_provider:
+        description: "AI provider to use"
+        required: false
+        default: "anthropic"
+        type: choice
+        options:
+          - anthropic
+          - foundry
 
 permissions:
   contents: write
@@ -16,20 +25,10 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v5
         with:
-          python-version: "3.11"
-
-      - name: Install deps
-        run: |
-          python -m pip install --upgrade pip
-          # Install pinned deps from requirements.txt so CI matches local dev
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          else
-            pip install anthropic python-frontmatter python-slugify pyyaml requests
-          fi
+          dotnet-version: "10.0.x"
 
       - name: Generate grounded article via Web Search
         env:
@@ -38,7 +37,7 @@ jobs:
           FOUNDARY_API_KEY: ${{ secrets.FOUNDARY_API_KEY }}
           ENDPOINT_URL: ${{ secrets.ENDPOINT_URL }}
         run: |
-          python scripts/generate_post_claude.py
+          dotnet run --project scripts/BlogGenerator/src/BlogGenerator -- ${{ inputs.ai_provider || 'anthropic' }}
 
       - name: Commit & push if changed
         run: |
