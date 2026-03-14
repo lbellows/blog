@@ -31,11 +31,11 @@ cd blog
 
 ## Where the workflow and generator live
 
-- C# solution: `scripts/BlogGenerator/BlogGenerator.sln`
-- Console app: `scripts/BlogGenerator/src/BlogGenerator/Program.cs`
-- Core logic: `scripts/BlogGenerator/src/BlogGenerator.Core/`
+- C# solution: `BlogGenerator.sln`
+- Console app: `BlogGenerator/Program.cs`
+- Core logic: `BlogGenerator.Core/`
 - Scheduled workflow: `.github/workflows/daily-post-rag.yml`
-- Configuration: `scripts/BlogGenerator/src/BlogGenerator/appsettings.json`
+- Configuration: `BlogGenerator/appsettings.json`
 
 Provider selection at runtime via CLI arg (`anthropic` or `foundry`) or `AI_PROVIDER` env var.
 
@@ -45,7 +45,7 @@ Requires .NET 10 SDK. Run with your Anthropic key exported:
 
 ```sh
 export ANTHROPIC_API_KEY="sk-..."
-dotnet run --project scripts/BlogGenerator/src/BlogGenerator -- anthropic
+dotnet run --project BlogGenerator -- anthropic
 ```
 
 For Azure Foundry:
@@ -53,13 +53,13 @@ For Azure Foundry:
 ```sh
 export FOUNDARY_API_KEY="..."
 export ENDPOINT_URL="https://..."
-dotnet run --project scripts/BlogGenerator/src/BlogGenerator -- foundry
+dotnet run --project BlogGenerator -- foundry
 ```
 
 ## Run the tests
 
 ```sh
-dotnet test scripts/BlogGenerator/BlogGenerator.sln
+dotnet test BlogGenerator.sln
 ```
 
 ## Content defaults (adjust in `appsettings.json`)
@@ -80,7 +80,7 @@ dotnet test scripts/BlogGenerator/BlogGenerator.sln
 - `MemeGuidanceEnabled` — toggles whether prompts instruct the model to embed a meme image.
 - Generated posts automatically add a model tag (e.g., `claude-sonnet-4-6`) so you can filter by source model.
 
-These are defined in `scripts/BlogGenerator/src/BlogGenerator/appsettings.json`. Secrets (`ANTHROPIC_API_KEY`, `FOUNDARY_API_KEY`, `ENDPOINT_URL`) are read from environment variables only.
+These are defined in `BlogGenerator/appsettings.json`. Secrets (`ANTHROPIC_API_KEY`, `FOUNDARY_API_KEY`, `ENDPOINT_URL`) are read from environment variables only.
 
 Tags are derived automatically from section headings/TL;DR content plus the model name (e.g., `claude`). No manual tag list is required.
 

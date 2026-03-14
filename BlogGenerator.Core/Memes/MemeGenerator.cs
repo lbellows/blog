@@ -84,7 +84,7 @@ public static class MemeGenerator
         {
             var path = candidate.StartsWith('/')
                 ? candidate
-                : Path.Combine(repoRoot, "scripts", "BlogGenerator", candidate);
+                : Path.Combine(repoRoot, candidate);
             if (File.Exists(path))
             {
                 try

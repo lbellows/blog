@@ -31,6 +31,7 @@ public static class PromptBuilder
         var guidanceLines = new List<string>
         {
             "- A single H1 title on the first line (non-clickbait, specific).",
+            "- Do not include a 'Published', word-count, audience, or tags metadata line in the body; front matter and the site layout already handle that.",
             "- A short **TL;DR** section.",
             "- Clear sections with practical takeaways (code or CLI snippets welcome).",
             $"- {TechGuidance}",

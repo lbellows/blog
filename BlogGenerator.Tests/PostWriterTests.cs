@@ -44,4 +44,28 @@ public class PostWriterTests
         var result = PostWriter.StripLeadingTitleHeading(input);
         Assert.Equal(input, result);
     }
+
+    [Fact]
+    public void StripLeadingPostMetadataRemovesPublishedLineAndRule()
+    {
+        var input = "**Published:** March 14, 2026\t~850 words\n\n---\n\n## TL;DR\nContent";
+        var result = PostWriter.StripLeadingPostMetadata(input);
+        Assert.Equal("## TL;DR\nContent", result);
+    }
+
+    [Fact]
+    public void StripLeadingPostMetadataRemovesPublishedLineWithTags()
+    {
+        var input = "**Published:** March 13, 2026 | **Tags:** Azure, .NET\n\n## TL;DR\nContent";
+        var result = PostWriter.StripLeadingPostMetadata(input);
+        Assert.Equal("## TL;DR\nContent", result);
+    }
+
+    [Fact]
+    public void StripLeadingPostMetadataLeavesNormalBodyAlone()
+    {
+        var input = "## TL;DR\nContent";
+        var result = PostWriter.StripLeadingPostMetadata(input);
+        Assert.Equal(input, result);
+    }
 }

@@ -27,6 +27,7 @@ public static partial class PostWriter
 
         var title = TitleExtractor.Extract(markdownBody);
         markdownBody = StripLeadingTitleHeading(markdownBody);
+        markdownBody = StripLeadingPostMetadata(markdownBody);
         var helper = new SlugHelper();
         var slug = helper.GenerateSlug(title);
         if (slug.Length > 80) slug = slug[..80];
@@ -110,6 +111,34 @@ public static partial class PostWriter
             return string.Empty;
 
         return trimmed[(newlineIndex + 1)..].TrimStart('\n', '\r');
+    }
+
+    internal static string StripLeadingPostMetadata(string markdownBody)
+    {
+        var lines = markdownBody.ReplaceLineEndings("\n").Split('\n').ToList();
+
+        while (lines.Count > 0 && string.IsNullOrWhiteSpace(lines[0]))
+            lines.RemoveAt(0);
+
+        if (lines.Count == 0)
+            return string.Empty;
+
+        if (!lines[0].TrimStart().StartsWith("**Published:**", StringComparison.OrdinalIgnoreCase))
+            return markdownBody;
+
+        lines.RemoveAt(0);
+
+        while (lines.Count > 0 && string.IsNullOrWhiteSpace(lines[0]))
+            lines.RemoveAt(0);
+
+        if (lines.Count > 0 && lines[0].Trim() == "---")
+        {
+            lines.RemoveAt(0);
+            while (lines.Count > 0 && string.IsNullOrWhiteSpace(lines[0]))
+                lines.RemoveAt(0);
+        }
+
+        return string.Join("\n", lines);
     }
 
     private static string EscapeYamlString(string value)

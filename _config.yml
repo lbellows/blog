@@ -125,7 +125,11 @@ exclude:
   - Gemfile.lock
   - node_modules
   - vendor
-  - scripts            # keep helper scripts out of the published site
+  - BlogGenerator
+  - BlogGenerator.Core
+  - BlogGenerator.Tests
+  - BlogGenerator.sln
+  - fonts
   - .github
   - .devcontainer
   - .vscode

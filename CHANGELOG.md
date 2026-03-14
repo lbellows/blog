@@ -1,9 +1,12 @@
 # Changelog
 
 ## 2026-03-13
+- Flattened the .NET generator layout to the repo root (`BlogGenerator.sln`, `BlogGenerator/`, `BlogGenerator.Core/`, `BlogGenerator.Tests/`) and updated build, test, workflow, and docs paths to match.
+- Removed the obsolete Python generator code, shared Python utilities, `requirements.txt`, caches, and virtualenv artifacts now that the C# rewrite is the only supported pipeline.
 - Restored the C# Anthropic generator default to `claude-sonnet-4-6`, surfaced Anthropic error bodies when a request is rejected, and deduped bound domain/model lists before building provider requests.
 - Updated the daily publishing workflow to `actions/checkout@v5` so it runs on Node 24 and avoids the GitHub Actions Node 20 deprecation warning.
 - Updated post generation to strip the leading markdown H1 from saved posts so the page layout title is not duplicated in rendered articles.
+- Updated prompts and post writing to remove model-generated inline post metadata like `**Published:** ... ~850 words` from future posts.
 
 ## 2025-11-14
 - Consolidated Claude/Foundry defaults (models, token/temperature caps, meme guidance toggle) inside `scripts/common/settings.py` so only secrets and endpoints rely on environment variables.

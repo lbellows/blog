@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\BlogGenerator.Core\BlogGenerator.Core.csproj" />
+    <ProjectReference Include="..\BlogGenerator.Core\BlogGenerator.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
