@@ -30,10 +30,20 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
+      - name: Validate Foundry configuration
+        if: ${{ inputs.ai_provider == 'foundry' }}
+        env:
+          FOUNDRY_OPENAI_ENDPOINT: ${{ secrets.FOUNDRY_OPENAI_ENDPOINT }}
+          FOUNDRY_PROJECT_API_KEY: ${{ secrets.FOUNDRY_PROJECT_API_KEY }}
+        run: |
+          [ -n "$FOUNDRY_OPENAI_ENDPOINT" ] || { echo "::error::Missing FOUNDRY_OPENAI_ENDPOINT secret."; exit 1; }
+          [ -n "$FOUNDRY_PROJECT_API_KEY" ] || { echo "::error::Missing FOUNDRY_PROJECT_API_KEY secret."; exit 1; }
+
       - name: Generate grounded article via Web Search
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          FOUNDRY_PROJECT_ENDPOINT: ${{ secrets.FOUNDRY_PROJECT_ENDPOINT }}
+          FOUNDRY_OPENAI_ENDPOINT: ${{ secrets.FOUNDRY_OPENAI_ENDPOINT }}
+          FOUNDRY_PROJECT_API_KEY: ${{ secrets.FOUNDRY_PROJECT_API_KEY }}
         run: |
           dotnet run --project BlogGenerator -- ${{ inputs.ai_provider || 'anthropic' }}
 

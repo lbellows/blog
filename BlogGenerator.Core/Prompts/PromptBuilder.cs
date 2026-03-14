@@ -101,6 +101,18 @@ public static class PromptBuilder
                 "Treat the primary requested link as the anchor narrative—summarize it first, then expand with corroborating context.");
         }
 
+        if (settings.AllowedDomains.Count > 0)
+        {
+            items.Add(
+                $"Prefer sources from these domains when they have relevant coverage: {string.Join(", ", settings.AllowedDomains)}.");
+        }
+
+        if (settings.BlockedDomains.Count > 0)
+        {
+            items.Add(
+                $"Avoid sources from these domains unless there is no credible alternative: {string.Join(", ", settings.BlockedDomains)}.");
+        }
+
         return items;
     }
 

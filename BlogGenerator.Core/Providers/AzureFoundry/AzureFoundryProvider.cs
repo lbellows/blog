@@ -1,8 +1,7 @@
-using Azure.AI.Projects;
-using Azure.AI.Projects.OpenAI;
-using Azure.Identity;
+using System.ClientModel;
 using BlogGenerator.Core.Configuration;
 using BlogGenerator.Core.Prompts;
+using OpenAI;
 using OpenAI.Responses;
 
 namespace BlogGenerator.Core.Providers.AzureFoundry;
@@ -18,7 +17,8 @@ public sealed class AzureFoundryProvider : IAIProvider
         GenerationSettings settings,
         CancellationToken ct = default)
     {
-        var projectEndpoint = ResolveProjectEndpoint();
+        var endpoint = ResolveOpenAiEndpoint();
+        var apiKey = ResolveApiKey();
         var models = BuildModelCandidates(settings);
 
         Exception? lastErr = null;
@@ -26,51 +26,45 @@ public sealed class AzureFoundryProvider : IAIProvider
         {
             Console.WriteLine($"Trying Foundry model: {candidate}");
 
-            var agentName = BuildAgentName(candidate);
-            AIProjectClient? projectClient = null;
-            AgentVersion? agentVersion = null;
-
             try
             {
-                projectClient = new AIProjectClient(
-                    projectEndpoint,
-                    new DefaultAzureCredential());
+                var client = new ResponsesClient(
+                    credential: new ApiKeyCredential(apiKey),
+                    options: new OpenAIClientOptions
+                    {
+                        Endpoint = endpoint,
+                    });
 
-                PromptAgentDefinition agentDefinition = new(model: candidate)
+                CreateResponseOptions responseOptions = new()
                 {
-                    Instructions = promptContext.SystemPrompt,
+                    Model = candidate,
+                    ToolChoice = ResponseToolChoice.CreateRequiredChoice(),
+                    MaxOutputTokenCount = settings.FoundryMaxTokens,
+                    MaxToolCallCount = settings.MaxSearches,
                     Temperature = settings.FoundryTemperature is null ? null : (float)settings.FoundryTemperature.Value,
                     TopP = settings.FoundryTopP is null ? null : (float)settings.FoundryTopP.Value,
+                    InputItems =
+                    {
+                        ResponseItem.CreateDeveloperMessageItem(promptContext.SystemPrompt),
+                        ResponseItem.CreateUserMessageItem(promptContext.UserPrompt),
+                    },
                     Tools =
                     {
                         BuildWebSearchTool(settings),
                     },
                 };
 
-                agentVersion = projectClient.Agents.CreateAgentVersion(
-                    agentName: agentName,
-                    options: new(agentDefinition));
+                ResponseResult response = await client.CreateResponseAsync(responseOptions, ct);
 
-                ProjectResponsesClient responsesClient =
-                    projectClient.OpenAI.GetProjectResponsesClientForAgent(agentVersion.Name);
-
-                CreateResponseOptions responseOptions = new()
+                foreach (ResponseItem item in response.OutputItems)
                 {
-                    ToolChoice = ResponseToolChoice.CreateRequiredChoice(),
-                    MaxOutputTokenCount = settings.FoundryMaxTokens,
-                    InputItems =
-                    {
-                        ResponseItem.CreateUserMessageItem(promptContext.UserPrompt),
-                    },
-                };
-
-                ResponseResult response = await responsesClient.CreateResponseAsync(
-                    responseOptions,
-                    cancellationToken: ct);
+                    if (item is WebSearchCallResponseItem webSearchCall)
+                        Console.WriteLine($"Web search invoked: {webSearchCall.Status} ({webSearchCall.Id})");
+                }
 
                 var markdown = response.GetOutputText()?.Trim() ?? string.Empty;
                 if (string.IsNullOrWhiteSpace(markdown))
-                    throw new InvalidOperationException("Foundry agent response did not contain output text.");
+                    throw new InvalidOperationException("Foundry response did not contain output text.");
 
                 Console.WriteLine($"Found working model: {candidate}");
                 return new AIProviderResponse(markdown, candidate);
@@ -78,21 +72,7 @@ public sealed class AzureFoundryProvider : IAIProvider
             catch (Exception ex)
             {
                 lastErr = ex;
-                Console.WriteLine($"Foundry call failed for {candidate}: {ex.Message}");
-            }
-            finally
-            {
-                if (projectClient is not null && agentVersion is not null)
-                {
-                    try
-                    {
-                        projectClient.Agents.DeleteAgentVersion(agentVersion.Name, agentVersion.Version);
-                    }
-                    catch (Exception cleanupEx)
-                    {
-                        Console.WriteLine($"Cleanup failed for agent {agentName}: {cleanupEx.Message}");
-                    }
-                }
+                Console.WriteLine($"Foundry call failed for {candidate}: {SanitizeErrorMessage(ex.Message, endpoint, apiKey)}");
             }
         }
 
@@ -100,12 +80,45 @@ public sealed class AzureFoundryProvider : IAIProvider
             $"No available Foundry deployment found after trying models: [{string.Join(", ", models)}]. Last error: {lastErr?.Message}");
     }
 
-    private static Uri ResolveProjectEndpoint()
+    private static string ResolveApiKey()
     {
-        var rawEndpoint = Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_ENDPOINT")
-            ?? throw new InvalidOperationException("FOUNDRY_PROJECT_ENDPOINT must be set");
+        var apiKey = Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_API_KEY");
+        if (string.IsNullOrWhiteSpace(apiKey))
+            throw new InvalidOperationException("FOUNDRY_PROJECT_API_KEY must be set to a non-empty API key.");
 
-        return new Uri(rawEndpoint, UriKind.Absolute);
+        return apiKey.Trim();
+    }
+
+    private static Uri ResolveOpenAiEndpoint()
+    {
+        var rawEndpoint = Environment.GetEnvironmentVariable("FOUNDRY_OPENAI_ENDPOINT");
+        if (string.IsNullOrWhiteSpace(rawEndpoint))
+            throw new InvalidOperationException(
+                "FOUNDRY_OPENAI_ENDPOINT must be set to a non-empty Azure OpenAI endpoint.");
+
+        var trimmedEndpoint = rawEndpoint.Trim();
+        if (!Uri.TryCreate(trimmedEndpoint, UriKind.Absolute, out var endpoint))
+        {
+            throw new InvalidOperationException(
+                "FOUNDRY_OPENAI_ENDPOINT is not a valid absolute URI.");
+        }
+
+        if (!trimmedEndpoint.Contains("/openai/", StringComparison.OrdinalIgnoreCase))
+        {
+            endpoint = new Uri(endpoint, endpoint.AbsolutePath.EndsWith("/")
+                ? "openai/v1/"
+                : $"{endpoint.AbsolutePath.TrimEnd('/')}/openai/v1/");
+        }
+
+        return endpoint;
+    }
+
+    private static string SanitizeErrorMessage(string message, Uri endpoint, string apiKey)
+    {
+        var sanitized = message;
+        sanitized = sanitized.Replace(endpoint.ToString(), "[FOUNDRY_OPENAI_ENDPOINT]", StringComparison.OrdinalIgnoreCase);
+        sanitized = sanitized.Replace(apiKey, "[FOUNDRY_PROJECT_API_KEY]", StringComparison.Ordinal);
+        return sanitized;
     }
 
     internal static IReadOnlyList<string> BuildModelCandidates(GenerationSettings settings)
@@ -126,30 +139,7 @@ public sealed class AzureFoundryProvider : IAIProvider
 
     private static ResponseTool BuildWebSearchTool(GenerationSettings settings)
     {
-        WebSearchToolFilters? filters = null;
-        if (settings.AllowedDomains.Count > 0)
-        {
-            filters = new WebSearchToolFilters();
-            foreach (var domain in settings.AllowedDomains)
-                filters.AllowedDomains.Add(domain);
-        }
-
-        return ResponseTool.CreateWebSearchTool(filters: filters);
-    }
-
-    private static string BuildAgentName(string modelName)
-    {
-        var sanitized = new string(
-            modelName
-                .ToLowerInvariant()
-                .Select(ch => char.IsLetterOrDigit(ch) ? ch : '-')
-                .ToArray())
-            .Trim('-');
-
-        if (sanitized.Length > 24)
-            sanitized = sanitized[..24].Trim('-');
-
-        var suffix = Guid.NewGuid().ToString("N")[..8];
-        return $"blog-{sanitized}-{suffix}";
+        _ = settings;
+        return ResponseTool.CreateWebSearchPreviewTool();
     }
 }

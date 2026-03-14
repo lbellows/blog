@@ -86,4 +86,17 @@ public class PromptBuilderTests
         var ctx = PromptBuilder.Build(settings, today: today);
         Assert.Equal(new DateOnly(2025, 6, 7), ctx.RecentStartDate);
     }
+
+    [Fact]
+    public void UserPromptIncludesDomainPreferencesWhenConfigured()
+    {
+        var settings = CreateSettings();
+        settings.AllowedDomains.Add("learn.microsoft.com");
+        settings.BlockedDomains.Add("example.com");
+
+        var ctx = PromptBuilder.Build(settings, today: new DateOnly(2025, 6, 2));
+
+        Assert.Contains("learn.microsoft.com", ctx.UserPrompt);
+        Assert.Contains("example.com", ctx.UserPrompt);
+    }
 }

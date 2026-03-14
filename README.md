@@ -48,10 +48,11 @@ export ANTHROPIC_API_KEY="sk-..."
 dotnet run --project BlogGenerator -- anthropic
 ```
 
-For Azure Foundry Agent Service:
+For Azure Foundry via the Azure OpenAI-compatible Responses endpoint:
 
 ```sh
-export FOUNDRY_PROJECT_ENDPOINT="https://...services.ai.azure.com/api/projects/..."
+export FOUNDRY_OPENAI_ENDPOINT="https://...openai.azure.com/openai/v1/"
+export FOUNDRY_PROJECT_API_KEY="..."
 dotnet run --project BlogGenerator -- foundry
 ```
 
@@ -76,16 +77,16 @@ dotnet test BlogGenerator.sln
 - `DefaultAuthor` — default author name injected into front matter.
 - `AnthropicModel` — default Claude deployment slug.
 - `AnthropicMaxTokens` / `AnthropicTemperature` — controls Claude response length and creativity.
-- `FoundryModels` — ordered list of Azure Foundry deployments the agent path can try after the configured default deployment.
+- `FoundryModels` — ordered list of Azure Foundry deployments the Responses path can try after the configured default deployment.
 - `FoundryDefaultModel`/`FoundryMaxTokens`/`FoundryTemperature`/`FoundryTopP` — generation parameters used by the Foundry path. `FoundryDefaultModel` is always tried first.
 - `MemeGuidanceEnabled` — toggles whether prompts instruct the model to embed a meme image.
 - Generated posts automatically add a model tag (e.g., `claude-sonnet-4-6`) so you can filter by source model.
 
-Azure Foundry web search now uses the preview `Azure.AI.Projects` / Agent Service SDK path with a web-search-enabled agent attached to the configured deployment. This requires Azure credential-based authentication in the runtime environment, not an API key. The Foundry path also applies your configured `AllowedDomains` list to the Azure web-search tool.
+Azure Foundry generation now uses the Azure OpenAI-compatible Responses API with API-key auth. The Foundry path hits your configured `FOUNDRY_OPENAI_ENDPOINT`, tries the configured model list in order, and forces Azure web search via the preview Responses web-search tool. The prompt also biases source selection toward your configured `AllowedDomains` list.
 
 `DeepSeek-V3.2` was removed from the default Foundry model list because Microsoft documents it as not supporting tool calling, which makes it a poor fit for grounded web-search generation.
 
-These are defined in `BlogGenerator/appsettings.json`. Runtime auth/integration values come from environment variables only: `ANTHROPIC_API_KEY` and `FOUNDRY_PROJECT_ENDPOINT`.
+These are defined in `BlogGenerator/appsettings.json`. Runtime auth/integration values come from environment variables only: `ANTHROPIC_API_KEY`, `FOUNDRY_OPENAI_ENDPOINT`, and `FOUNDRY_PROJECT_API_KEY`.
 
 Tags are derived automatically from section headings/TL;DR content plus the model name (e.g., `claude`). No manual tag list is required.
 
