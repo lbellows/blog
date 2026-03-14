@@ -4,10 +4,26 @@ namespace BlogGenerator.Tests;
 
 public class GenerationSettingsTests
 {
+    private static GenerationSettings CreateSettings() => new()
+    {
+        TopicHint = "Artificial Intelligence news for software engineers shipping on .NET and Azure.",
+        PostWordsMin = 200,
+        PostWordsMax = 1000,
+        MaxSearches = 7,
+        RecentWindowDays = 2,
+        DefaultAuthor = "the.serf",
+        AnthropicModel = "claude-sonnet-4-6",
+        AnthropicMaxTokens = 4096,
+        AnthropicTemperature = 0.9,
+        FoundryModels = ["DeepSeek-V3.2", "gpt-4.1-mini", "gpt-5.2-chat"],
+        FoundryDefaultModel = "gpt-5.2-chat",
+        FoundryMaxTokens = 4096,
+    };
+
     [Fact]
     public void NormalizeDedupesDomainsAndModels()
     {
-        var settings = new GenerationSettings();
+        var settings = CreateSettings();
         settings.AllowedDomains.Add("learn.microsoft.com");
         settings.AllowedDomains.Add(" Learn.Microsoft.com ");
         settings.BlockedDomains.Add(" example.com ");
@@ -26,5 +42,13 @@ public class GenerationSettingsTests
         Assert.Equal(
             settings.FoundryModels.Count,
             settings.FoundryModels.Distinct(StringComparer.OrdinalIgnoreCase).Count());
+    }
+
+    [Fact]
+    public void ValidateRejectsMissingConfiguredValues()
+    {
+        var settings = new GenerationSettings();
+        var ex = Assert.Throws<InvalidOperationException>(settings.Validate);
+        Assert.Contains("TopicHint", ex.Message);
     }
 }

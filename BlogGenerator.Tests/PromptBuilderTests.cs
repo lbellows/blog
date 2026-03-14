@@ -5,10 +5,26 @@ namespace BlogGenerator.Tests;
 
 public class PromptBuilderTests
 {
+    private static GenerationSettings CreateSettings() => new()
+    {
+        TopicHint = "Artificial Intelligence news for software engineers shipping on .NET and Azure.",
+        PostWordsMin = 200,
+        PostWordsMax = 1000,
+        MaxSearches = 7,
+        RecentWindowDays = 2,
+        DefaultAuthor = "the.serf",
+        AnthropicModel = "claude-sonnet-4-6",
+        AnthropicMaxTokens = 4096,
+        AnthropicTemperature = 0.9,
+        FoundryModels = ["DeepSeek-V3.2", "gpt-4.1-mini", "gpt-5.2-chat"],
+        FoundryDefaultModel = "gpt-5.2-chat",
+        FoundryMaxTokens = 4096,
+    };
+
     [Fact]
     public void BuildProducesSundaySynopsisMode()
     {
-        var settings = new GenerationSettings();
+        var settings = CreateSettings();
         var sunday = new DateOnly(2025, 6, 1); // Sunday
         var ctx = PromptBuilder.Build(settings, today: sunday);
         Assert.Contains("synopsis day", ctx.ModeInstructions);
@@ -17,7 +33,7 @@ public class PromptBuilderTests
     [Fact]
     public void BuildProducesWeekdayDeepDiveMode()
     {
-        var settings = new GenerationSettings();
+        var settings = CreateSettings();
         var monday = new DateOnly(2025, 6, 2); // Monday
         var ctx = PromptBuilder.Build(settings, today: monday);
         Assert.Contains("laser-focused", ctx.ModeInstructions);
@@ -26,7 +42,9 @@ public class PromptBuilderTests
     [Fact]
     public void SystemPromptContainsWordLimits()
     {
-        var settings = new GenerationSettings { PostWordsMin = 300, PostWordsMax = 800 };
+        var settings = CreateSettings();
+        settings.PostWordsMin = 300;
+        settings.PostWordsMax = 800;
         var ctx = PromptBuilder.Build(settings, today: new DateOnly(2025, 6, 2));
         Assert.Contains("300-800", ctx.SystemPrompt);
     }
@@ -34,7 +52,8 @@ public class PromptBuilderTests
     [Fact]
     public void UserPromptContainsTopicHint()
     {
-        var settings = new GenerationSettings { TopicHint = "Custom topic hint" };
+        var settings = CreateSettings();
+        settings.TopicHint = "Custom topic hint";
         var ctx = PromptBuilder.Build(settings, today: new DateOnly(2025, 6, 2));
         Assert.Contains("Custom topic hint", ctx.UserPrompt);
     }
@@ -42,7 +61,8 @@ public class PromptBuilderTests
     [Fact]
     public void PrimaryLinkLineIncludedWhenSet()
     {
-        var settings = new GenerationSettings { TopicUrl = "https://example.com/article" };
+        var settings = CreateSettings();
+        settings.TopicUrl = "https://example.com/article";
         var ctx = PromptBuilder.Build(settings, today: new DateOnly(2025, 6, 2));
         Assert.Contains("https://example.com/article", ctx.PrimaryLinkLine);
         Assert.True(ctx.UserInstructionItems.Count >= 5); // extra instruction added
@@ -51,7 +71,8 @@ public class PromptBuilderTests
     [Fact]
     public void MemeGuidanceIncludedWhenEnabled()
     {
-        var settings = new GenerationSettings { MemeGuidanceEnabled = true };
+        var settings = CreateSettings();
+        settings.MemeGuidanceEnabled = true;
         var ctx = PromptBuilder.Build(settings, today: new DateOnly(2025, 6, 2));
         Assert.Contains("meme", ctx.SystemPrompt, StringComparison.OrdinalIgnoreCase);
     }
@@ -59,7 +80,8 @@ public class PromptBuilderTests
     [Fact]
     public void RecentStartDateIsCorrectDaysBack()
     {
-        var settings = new GenerationSettings { RecentWindowDays = 3 };
+        var settings = CreateSettings();
+        settings.RecentWindowDays = 3;
         var today = new DateOnly(2025, 6, 10);
         var ctx = PromptBuilder.Build(settings, today: today);
         Assert.Equal(new DateOnly(2025, 6, 7), ctx.RecentStartDate);

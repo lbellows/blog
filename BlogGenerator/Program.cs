@@ -15,10 +15,11 @@ var repoRoot = FindRepoRoot(AppContext.BaseDirectory)
     ?? FindRepoRoot(Directory.GetCurrentDirectory())
     ?? throw new InvalidOperationException("Could not find repo root (directory containing _posts/)");
 
-// Bind settings
-builder.Configuration.AddJsonFile(
-    Path.Combine(AppContext.BaseDirectory, "appsettings.json"), optional: true);
-builder.Services.Configure<GenerationSettings>(builder.Configuration.GetSection("Generation"));
+// Load non-secret settings from the single application settings file.
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(AppContext.BaseDirectory)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+    .Build();
 
 // Register HttpClient for providers
 builder.Services.AddHttpClient<AnthropicProvider>();
@@ -29,9 +30,10 @@ var host = builder.Build();
 // Determine provider from CLI arg or env var
 var providerName = args.Length > 0 ? args[0] : Environment.GetEnvironmentVariable("AI_PROVIDER") ?? "anthropic";
 
-var settings = new GenerationSettings();
-builder.Configuration.GetSection("Generation").Bind(settings);
+var settings = configuration.GetRequiredSection("Generation").Get<GenerationSettings>()
+    ?? throw new InvalidOperationException("The Generation section is missing from appsettings.json.");
 settings.Normalize();
+settings.Validate();
 settings.RepoRoot = repoRoot;
 
 IAIProvider provider = providerName.ToLowerInvariant() switch

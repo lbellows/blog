@@ -3,6 +3,7 @@
 ## 2026-03-13
 - Flattened the .NET generator layout to the repo root (`BlogGenerator.sln`, `BlogGenerator/`, `BlogGenerator.Core/`, `BlogGenerator.Tests/`) and updated build, test, workflow, and docs paths to match.
 - Removed the obsolete Python generator code, shared Python utilities, `requirements.txt`, caches, and virtualenv artifacts now that the C# rewrite is the only supported pipeline.
+- Removed code-level fallback content/model defaults so `BlogGenerator/appsettings.json` is now the single non-secret settings source, with startup validation for missing values.
 - Refactored the Azure Foundry path to use the official `OpenAI.Chat.ChatClient` against the `FOUNDRY_OPENAI_ENDPOINT` endpoint, with the corrected `FOUNDRY_*` secret names only.
 - Restored the C# Anthropic generator default to `claude-sonnet-4-6`, surfaced Anthropic error bodies when a request is rejected, and deduped bound domain/model lists before building provider requests.
 - Updated the daily publishing workflow to `actions/checkout@v5` so it runs on Node 24 and avoids the GitHub Actions Node 20 deprecation warning.

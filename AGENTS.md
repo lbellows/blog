@@ -9,6 +9,7 @@ The blog generator is a C# .NET 10 solution at the repo root.
 - Core logic (providers, prompts, post writing, memes): `BlogGenerator.Core/`
 - Unit tests: `BlogGenerator.Tests/`
 - Configuration: `BlogGenerator/appsettings.json` (non-secret settings only)
+- `appsettings.json` is the single source of truth for non-secret generation settings; `GenerationSettings` only defines the bound schema and validation.
 - Provider selection at runtime via CLI arg or `AI_PROVIDER` env var: `anthropic` or `foundry`
 
 ## Project Structure & Module Organization

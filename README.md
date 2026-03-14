@@ -64,6 +64,8 @@ dotnet test BlogGenerator.sln
 
 ## Content defaults (adjust in `appsettings.json`)
 
+`BlogGenerator/appsettings.json` is the only non-secret configuration source. `GenerationSettings.cs` now only defines the typed shape plus validation; it does not carry fallback model or content defaults.
+
 - `TopicHint` — short instruction describing audience/angle (example: "AI + .NET + Azure + GitHub + LLM").
 - `MaxSearches` — maximum number of web-search calls the model may perform (integer).
 - `AllowedDomains` — domains to bias results toward (optional). Defaults include Microsoft/GitHub properties plus tech press (`learn.microsoft.com`, `azure.microsoft.com`, `techcommunity.microsoft.com`, `blogs.microsoft.com`, `devblogs.microsoft.com`, `developer.microsoft.com`, `github.blog`, `techcrunch.com`, `venturebeat.com`, `infoq.com`).
