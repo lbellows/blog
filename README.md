@@ -48,11 +48,10 @@ export ANTHROPIC_API_KEY="sk-..."
 dotnet run --project BlogGenerator -- anthropic
 ```
 
-For Azure Foundry:
+For Azure Foundry Agent Service:
 
 ```sh
-export FOUNDRY_PROJECT_API_KEY="..."
-export FOUNDRY_OPENAI_ENDPOINT="https://.../openai/v1/"
+export FOUNDRY_PROJECT_ENDPOINT="https://...services.ai.azure.com/api/projects/..."
 dotnet run --project BlogGenerator -- foundry
 ```
 
@@ -77,12 +76,16 @@ dotnet test BlogGenerator.sln
 - `DefaultAuthor` — default author name injected into front matter.
 - `AnthropicModel` — default Claude deployment slug.
 - `AnthropicMaxTokens` / `AnthropicTemperature` — controls Claude response length and creativity.
-- `FoundryModels` — ordered list of Azure Foundry deployments the REST client will try.
-- `FoundryDefaultModel`/`FoundryMaxTokens`/`FoundryTemperature`/`FoundryTopP` — chat parameters applied to Azure Foundry calls.
+- `FoundryModels` — ordered list of Azure Foundry deployments the agent path can try after the configured default deployment.
+- `FoundryDefaultModel`/`FoundryMaxTokens`/`FoundryTemperature`/`FoundryTopP` — generation parameters used by the Foundry path. `FoundryDefaultModel` is always tried first.
 - `MemeGuidanceEnabled` — toggles whether prompts instruct the model to embed a meme image.
 - Generated posts automatically add a model tag (e.g., `claude-sonnet-4-6`) so you can filter by source model.
 
-These are defined in `BlogGenerator/appsettings.json`. Secrets (`ANTHROPIC_API_KEY`, `FOUNDRY_PROJECT_API_KEY`, `FOUNDRY_OPENAI_ENDPOINT`) are read from environment variables only.
+Azure Foundry web search now uses the preview `Azure.AI.Projects` / Agent Service SDK path with a web-search-enabled agent attached to the configured deployment. This requires Azure credential-based authentication in the runtime environment, not an API key. The Foundry path also applies your configured `AllowedDomains` list to the Azure web-search tool.
+
+`DeepSeek-V3.2` was removed from the default Foundry model list because Microsoft documents it as not supporting tool calling, which makes it a poor fit for grounded web-search generation.
+
+These are defined in `BlogGenerator/appsettings.json`. Runtime auth/integration values come from environment variables only: `ANTHROPIC_API_KEY` and `FOUNDRY_PROJECT_ENDPOINT`.
 
 Tags are derived automatically from section headings/TL;DR content plus the model name (e.g., `claude`). No manual tag list is required.
 

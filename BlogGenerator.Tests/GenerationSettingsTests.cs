@@ -1,4 +1,5 @@
 using BlogGenerator.Core.Configuration;
+using BlogGenerator.Core.Providers.AzureFoundry;
 
 namespace BlogGenerator.Tests;
 
@@ -15,7 +16,7 @@ public class GenerationSettingsTests
         AnthropicModel = "claude-sonnet-4-6",
         AnthropicMaxTokens = 4096,
         AnthropicTemperature = 0.9,
-        FoundryModels = ["DeepSeek-V3.2", "gpt-4.1-mini", "gpt-5.2-chat"],
+        FoundryModels = ["gpt-4.1-mini", "gpt-5.2-chat"],
         FoundryDefaultModel = "gpt-5.2-chat",
         FoundryMaxTokens = 4096,
     };
@@ -50,5 +51,16 @@ public class GenerationSettingsTests
         var settings = new GenerationSettings();
         var ex = Assert.Throws<InvalidOperationException>(settings.Validate);
         Assert.Contains("TopicHint", ex.Message);
+    }
+
+    [Fact]
+    public void BuildModelCandidatesPrefersFoundryDefaultModel()
+    {
+        var settings = CreateSettings();
+
+        var candidates = AzureFoundryProvider.BuildModelCandidates(settings);
+
+        Assert.Equal("gpt-5.2-chat", candidates[0]);
+        Assert.Equal(["gpt-5.2-chat", "gpt-4.1-mini"], candidates);
     }
 }

@@ -1,10 +1,13 @@
+using Azure.AI.Projects;
+using Azure.AI.Projects.OpenAI;
+using Azure.Identity;
 using BlogGenerator.Core.Configuration;
 using BlogGenerator.Core.Prompts;
-using OpenAI;
-using OpenAI.Chat;
-using System.ClientModel;
+using OpenAI.Responses;
 
 namespace BlogGenerator.Core.Providers.AzureFoundry;
+
+#pragma warning disable OPENAI001
 
 public sealed class AzureFoundryProvider : IAIProvider
 {
@@ -15,44 +18,81 @@ public sealed class AzureFoundryProvider : IAIProvider
         GenerationSettings settings,
         CancellationToken ct = default)
     {
-        var endpoint = ResolveEndpoint();
-        var apiKey = ResolveApiKey();
-        var models = settings.FoundryModels.Count > 0
-            ? settings.FoundryModels.ToList()
-            : [settings.FoundryDefaultModel];
-
-        var rng = Random.Shared;
-        for (var i = models.Count - 1; i > 0; i--)
-        {
-            var j = rng.Next(i + 1);
-            (models[i], models[j]) = (models[j], models[i]);
-        }
+        var projectEndpoint = ResolveProjectEndpoint();
+        var models = BuildModelCandidates(settings);
 
         Exception? lastErr = null;
         foreach (var candidate in models)
         {
             Console.WriteLine($"Trying Foundry model: {candidate}");
+
+            var agentName = BuildAgentName(candidate);
+            AIProjectClient? projectClient = null;
+            AgentVersion? agentVersion = null;
+
             try
             {
-                var markdown = await CallFoundryAsync(
-                    promptContext,
-                    settings,
-                    candidate,
-                    endpoint,
-                    apiKey,
-                    ct: ct);
+                projectClient = new AIProjectClient(
+                    projectEndpoint,
+                    new DefaultAzureCredential());
+
+                PromptAgentDefinition agentDefinition = new(model: candidate)
+                {
+                    Instructions = promptContext.SystemPrompt,
+                    Temperature = settings.FoundryTemperature is null ? null : (float)settings.FoundryTemperature.Value,
+                    TopP = settings.FoundryTopP is null ? null : (float)settings.FoundryTopP.Value,
+                    Tools =
+                    {
+                        BuildWebSearchTool(settings),
+                    },
+                };
+
+                agentVersion = projectClient.Agents.CreateAgentVersion(
+                    agentName: agentName,
+                    options: new(agentDefinition));
+
+                ProjectResponsesClient responsesClient =
+                    projectClient.OpenAI.GetProjectResponsesClientForAgent(agentVersion.Name);
+
+                CreateResponseOptions responseOptions = new()
+                {
+                    ToolChoice = ResponseToolChoice.CreateRequiredChoice(),
+                    MaxOutputTokenCount = settings.FoundryMaxTokens,
+                    InputItems =
+                    {
+                        ResponseItem.CreateUserMessageItem(promptContext.UserPrompt),
+                    },
+                };
+
+                ResponseResult response = await responsesClient.CreateResponseAsync(
+                    responseOptions,
+                    cancellationToken: ct);
+
+                var markdown = response.GetOutputText()?.Trim() ?? string.Empty;
+                if (string.IsNullOrWhiteSpace(markdown))
+                    throw new InvalidOperationException("Foundry agent response did not contain output text.");
+
                 Console.WriteLine($"Found working model: {candidate}");
                 return new AIProviderResponse(markdown, candidate);
-            }
-            catch (ClientResultException ex) when (ex.Status == 404 || ex.Message.Contains("DeploymentNotFound"))
-            {
-                lastErr = ex;
-                Console.WriteLine($"Deployment {candidate} not found, trying next model...");
             }
             catch (Exception ex)
             {
                 lastErr = ex;
                 Console.WriteLine($"Foundry call failed for {candidate}: {ex.Message}");
+            }
+            finally
+            {
+                if (projectClient is not null && agentVersion is not null)
+                {
+                    try
+                    {
+                        projectClient.Agents.DeleteAgentVersion(agentVersion.Name, agentVersion.Version);
+                    }
+                    catch (Exception cleanupEx)
+                    {
+                        Console.WriteLine($"Cleanup failed for agent {agentName}: {cleanupEx.Message}");
+                    }
+                }
             }
         }
 
@@ -60,111 +100,56 @@ public sealed class AzureFoundryProvider : IAIProvider
             $"No available Foundry deployment found after trying models: [{string.Join(", ", models)}]. Last error: {lastErr?.Message}");
     }
 
-    private static async Task<string> CallFoundryAsync(
-        PromptContext promptContext,
-        GenerationSettings settings,
-        string deploymentModel,
-        Uri endpoint,
-        string apiKey,
-        string? retryInstruction = null,
-        CancellationToken ct = default)
+    private static Uri ResolveProjectEndpoint()
     {
-        ChatClient client = new(
-            credential: new ApiKeyCredential(apiKey),
-            model: deploymentModel,
-            options: new OpenAIClientOptions
-            {
-                Endpoint = endpoint,
-            });
+        var rawEndpoint = Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_ENDPOINT")
+            ?? throw new InvalidOperationException("FOUNDRY_PROJECT_ENDPOINT must be set");
 
-        var messages = new List<ChatMessage>
-        {
-            new SystemChatMessage(promptContext.SystemPrompt),
-            new UserChatMessage(promptContext.UserPrompt),
-        };
-        if (!string.IsNullOrWhiteSpace(retryInstruction))
-            messages.Add(new UserChatMessage(retryInstruction));
-
-        var options = new ChatCompletionOptions
-        {
-            MaxOutputTokenCount = settings.FoundryMaxTokens,
-        };
-
-        if (settings.FoundryTemperature.HasValue)
-            options.Temperature = (float)settings.FoundryTemperature.Value;
-        if (settings.FoundryTopP.HasValue)
-            options.TopP = (float)settings.FoundryTopP.Value;
-
-        var completion = await client.CompleteChatAsync(messages, options, ct);
-        var markdown = string.Join(
-            "\n",
-            completion.Value.Content
-                .Select(part => part.Text?.Trim())
-                .Where(text => !string.IsNullOrWhiteSpace(text)))?.Trim() ?? string.Empty;
-
-        if (string.IsNullOrWhiteSpace(markdown) && retryInstruction == null)
-        {
-            return await CallFoundryAsync(
-                promptContext,
-                settings,
-                deploymentModel,
-                endpoint,
-                apiKey,
-                EmptyResponseRetryText(),
-                ct);
-        }
-
-        var lower = markdown.ToLowerInvariant();
-        var hasHeading = markdown.Contains('#') || lower.StartsWith("h1:");
-        var hasTldr = lower.Contains("tl;dr");
-        var hasFurther = lower.Contains("further reading");
-        var toolMarkup = markdown.Contains("<|") || lower.Contains("web_search");
-
-        if (retryInstruction == null && (!(hasHeading && hasTldr && hasFurther) || toolMarkup))
-        {
-            return await CallFoundryAsync(
-                promptContext,
-                settings,
-                deploymentModel,
-                endpoint,
-                apiKey,
-                MarkupRetryText(toolMarkup),
-                ct);
-        }
-
-        return markdown;
+        return new Uri(rawEndpoint, UriKind.Absolute);
     }
 
-    private static Uri ResolveEndpoint()
+    internal static IReadOnlyList<string> BuildModelCandidates(GenerationSettings settings)
     {
-        var rawEndpoint = Environment.GetEnvironmentVariable("FOUNDRY_OPENAI_ENDPOINT")
-            ?? throw new InvalidOperationException("FOUNDRY_OPENAI_ENDPOINT must be set");
+        var candidates = new List<string>();
 
-        var normalized = rawEndpoint.Trim();
-        if (!normalized.EndsWith("/", StringComparison.Ordinal))
-            normalized += "/";
-        if (!normalized.Contains("/openai/v1/", StringComparison.OrdinalIgnoreCase))
-            normalized = normalized.TrimEnd('/') + "/openai/v1/";
+        if (!string.IsNullOrWhiteSpace(settings.FoundryDefaultModel))
+            candidates.Add(settings.FoundryDefaultModel.Trim());
 
-        return new Uri(normalized, UriKind.Absolute);
+        candidates.AddRange(settings.FoundryModels);
+
+        return candidates
+            .Where(model => !string.IsNullOrWhiteSpace(model))
+            .Select(model => model.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 
-    private static string ResolveApiKey() =>
-        Environment.GetEnvironmentVariable("FOUNDRY_PROJECT_API_KEY")
-        ?? throw new InvalidOperationException("FOUNDRY_PROJECT_API_KEY must be set");
-
-    private static string EmptyResponseRetryText() =>
-        "The previous response was empty. Provide the complete Markdown article now with an H1 title, " +
-        "a **TL;DR** section, practical sections, and a **Further reading** list. Do not mention tool usage.";
-
-    private static string MarkupRetryText(bool toolMarkupPresent)
+    private static ResponseTool BuildWebSearchTool(GenerationSettings settings)
     {
-        var intro = toolMarkupPresent
-            ? "The previous response included raw tool-call markup."
-            : "The previous response did not deliver the final Markdown article.";
+        WebSearchToolFilters? filters = null;
+        if (settings.AllowedDomains.Count > 0)
+        {
+            filters = new WebSearchToolFilters();
+            foreach (var domain in settings.AllowedDomains)
+                filters.AllowedDomains.Add(domain);
+        }
 
-        return $"{intro} Web search is unavailable in this environment. Reply now with a complete Markdown post " +
-               "that includes an H1 title, a **TL;DR** section, practical sections, and a **Further reading** list. " +
-               "Do not emit tool-call markup, <|...|> tokens, or describe the attempt; output only the article.";
+        return ResponseTool.CreateWebSearchTool(filters: filters);
+    }
+
+    private static string BuildAgentName(string modelName)
+    {
+        var sanitized = new string(
+            modelName
+                .ToLowerInvariant()
+                .Select(ch => char.IsLetterOrDigit(ch) ? ch : '-')
+                .ToArray())
+            .Trim('-');
+
+        if (sanitized.Length > 24)
+            sanitized = sanitized[..24].Trim('-');
+
+        var suffix = Guid.NewGuid().ToString("N")[..8];
+        return $"blog-{sanitized}-{suffix}";
     }
 }

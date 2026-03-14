@@ -33,8 +33,7 @@ jobs:
       - name: Generate grounded article via Web Search
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          FOUNDRY_PROJECT_API_KEY: ${{ secrets.FOUNDRY_PROJECT_API_KEY }}
-          FOUNDRY_OPENAI_ENDPOINT: ${{ secrets.FOUNDRY_OPENAI_ENDPOINT }}
+          FOUNDRY_PROJECT_ENDPOINT: ${{ secrets.FOUNDRY_PROJECT_ENDPOINT }}
         run: |
           dotnet run --project BlogGenerator -- ${{ inputs.ai_provider || 'anthropic' }}
 
