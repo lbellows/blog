@@ -22,7 +22,7 @@ builder.Services.Configure<GenerationSettings>(builder.Configuration.GetSection(
 
 // Register HttpClient for providers
 builder.Services.AddHttpClient<AnthropicProvider>();
-builder.Services.AddHttpClient<AzureFoundryProvider>();
+builder.Services.AddSingleton<AzureFoundryProvider>();
 
 var host = builder.Build();
 

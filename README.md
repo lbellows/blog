@@ -51,8 +51,8 @@ dotnet run --project BlogGenerator -- anthropic
 For Azure Foundry:
 
 ```sh
-export FOUNDARY_API_KEY="..."
-export ENDPOINT_URL="https://..."
+export FOUNDRY_PROJECT_API_KEY="..."
+export FOUNDRY_OPENAI_ENDPOINT="https://.../openai/v1/"
 dotnet run --project BlogGenerator -- foundry
 ```
 
@@ -80,7 +80,7 @@ dotnet test BlogGenerator.sln
 - `MemeGuidanceEnabled` — toggles whether prompts instruct the model to embed a meme image.
 - Generated posts automatically add a model tag (e.g., `claude-sonnet-4-6`) so you can filter by source model.
 
-These are defined in `BlogGenerator/appsettings.json`. Secrets (`ANTHROPIC_API_KEY`, `FOUNDARY_API_KEY`, `ENDPOINT_URL`) are read from environment variables only.
+These are defined in `BlogGenerator/appsettings.json`. Secrets (`ANTHROPIC_API_KEY`, `FOUNDRY_PROJECT_API_KEY`, `FOUNDRY_OPENAI_ENDPOINT`) are read from environment variables only.
 
 Tags are derived automatically from section headings/TL;DR content plus the model name (e.g., `claude`). No manual tag list is required.
 
