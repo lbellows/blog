@@ -28,4 +28,20 @@ public class PostWriterTests
         var result = PostWriter.StripLeadingInstructions(input);
         Assert.Equal("No heading at all\nJust text", result);
     }
+
+    [Fact]
+    public void StripLeadingTitleHeadingRemovesTopLevelTitle()
+    {
+        var input = "# Title\n\nContent";
+        var result = PostWriter.StripLeadingTitleHeading(input);
+        Assert.Equal("Content", result);
+    }
+
+    [Fact]
+    public void StripLeadingTitleHeadingLeavesBodyWithoutTopLevelTitle()
+    {
+        var input = "## Subtitle\nContent";
+        var result = PostWriter.StripLeadingTitleHeading(input);
+        Assert.Equal(input, result);
+    }
 }

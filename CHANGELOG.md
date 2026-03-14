@@ -2,6 +2,8 @@
 
 ## 2026-03-13
 - Restored the C# Anthropic generator default to `claude-sonnet-4-6`, surfaced Anthropic error bodies when a request is rejected, and deduped bound domain/model lists before building provider requests.
+- Updated the daily publishing workflow to `actions/checkout@v5` so it runs on Node 24 and avoids the GitHub Actions Node 20 deprecation warning.
+- Updated post generation to strip the leading markdown H1 from saved posts so the page layout title is not duplicated in rendered articles.
 
 ## 2025-11-14
 - Consolidated Claude/Foundry defaults (models, token/temperature caps, meme guidance toggle) inside `scripts/common/settings.py` so only secrets and endpoints rely on environment variables.

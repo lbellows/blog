@@ -26,6 +26,7 @@ public static partial class PostWriter
         Directory.CreateDirectory(postsDir);
 
         var title = TitleExtractor.Extract(markdownBody);
+        markdownBody = StripLeadingTitleHeading(markdownBody);
         var helper = new SlugHelper();
         var slug = helper.GenerateSlug(title);
         if (slug.Length > 80) slug = slug[..80];
@@ -96,6 +97,19 @@ public static partial class PostWriter
         return foundHeading
             ? string.Join("\n", cleaned).TrimStart('\n')
             : markdownBody.Trim();
+    }
+
+    internal static string StripLeadingTitleHeading(string markdownBody)
+    {
+        var trimmed = markdownBody.TrimStart();
+        if (!trimmed.StartsWith("# "))
+            return markdownBody;
+
+        var newlineIndex = trimmed.IndexOf('\n');
+        if (newlineIndex < 0)
+            return string.Empty;
+
+        return trimmed[(newlineIndex + 1)..].TrimStart('\n', '\r');
     }
 
     private static string EscapeYamlString(string value)
