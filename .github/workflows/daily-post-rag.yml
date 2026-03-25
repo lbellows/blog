@@ -45,7 +45,7 @@ jobs:
           FOUNDRY_OPENAI_ENDPOINT: ${{ secrets.FOUNDRY_OPENAI_ENDPOINT }}
           FOUNDRY_PROJECT_API_KEY: ${{ secrets.FOUNDRY_PROJECT_API_KEY }}
         run: |
-          dotnet run --project BlogGenerator -- ${{ inputs.ai_provider || 'anthropic' }}
+          dotnet run --project BlogGenerator -- ${{ inputs.ai_provider || 'foundry' }}
 
       - name: Commit & push if changed
         run: |
